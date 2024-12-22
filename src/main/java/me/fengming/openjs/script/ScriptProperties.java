@@ -33,7 +33,7 @@ public final class ScriptProperties {
         return Collections.unmodifiableMap(internal);
     }
 
-    public void initFromLines(List<String> lines) {
+    public void readFromLines(List<String> lines) {
         for (String line : lines) {
             line = line.trim();
             if (line.isEmpty()) {

@@ -2,9 +2,7 @@ package me.fengming.openjs.script;
 
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 
 /**
@@ -15,6 +13,15 @@ public final class ScriptProperty<T> {
     private static int indexCurrent = 0;
 
     public static final ScriptProperty<Integer> PRIORITY = register("priority", 0, Integer::valueOf);
+    public static final ScriptProperty<List<String>> REQUIRE = register(
+        "require",
+        Collections.emptyList(),
+        (s) -> Arrays.stream(s.split(","))
+            .map(String::trim)
+            .filter(str -> !str.isEmpty())
+            .toList()
+    );
+    public static final ScriptProperty<Boolean> ENABLED = register("enabled", true, Boolean::valueOf);
 
     public final String name;
     public final Integer ordinal;
