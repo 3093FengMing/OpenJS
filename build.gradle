@@ -9,7 +9,7 @@ plugins {
     id 'eclipse'
     id 'idea'
     id 'com.github.johnrengelman.shadow' version '8.1.1'
-    id "dev.architectury.loom" version "1.7-SNAPSHOT" // TODO: WHY I CANNOT USE 1.5 or higher
+    id "dev.architectury.loom" version "1.7-SNAPSHOT"
 }
 
 def props = project.properties
@@ -19,8 +19,6 @@ if (project.hasProperty("run_number")) {
     println("On GitHub runs #${props.run_number}")
 }
 println("Java: ${ -> sysProps['java.version']} | JVM: ${ -> sysProps['java.vm.version']} | Vendor: ${ -> sysProps['java.vendor']} | Architecture: ${ -> sysProps['os.arch']}")
-
-apply plugin: "dev.architectury.loom"
 
 group = mod_group_id
 version = mod_version
@@ -51,18 +49,16 @@ repositories {
 }
 
 dependencies {
-    minecraft "net.minecraft:minecraft:${minecraft_version}"
+    minecraft("net.minecraft:minecraft:${minecraft_version}")
 
     mappings(loom.layered {
         officialMojangMappings()
         parchment("org.parchmentmc.data:parchment-${parchment_version}")
     })
 
-    forge "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+    forge("net.minecraftforge:forge:${minecraft_version}-${forge_version}")
 
     implementation("org.mozilla:rhino:${rhino_version}")
-
-    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 }
 
 processResources {
