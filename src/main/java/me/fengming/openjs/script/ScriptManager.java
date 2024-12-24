@@ -2,12 +2,9 @@ package me.fengming.openjs.script;
 
 import me.fengming.openjs.OpenJS;
 import me.fengming.openjs.script.file.ScriptFile;
-import me.fengming.openjs.utils.Utils;
+import me.fengming.openjs.script.file.ScriptFileCollector;
 
 import java.io.IOException;
-import java.nio.file.FileVisitOption;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,21 +18,6 @@ public class ScriptManager {
         this.type = type;
     }
 
-    public void addAllScripts(Path path) {
-        try {
-            Utils.checkPath(path);
-            Files.walk(path, 10, FileVisitOption.FOLLOW_LINKS)
-                    .filter(Files::isRegularFile)
-                    .forEach(this::addScriptFile);
-        } catch (IOException e) {
-            OpenJS.LOGGER.error(e.getMessage());
-        }
-    }
-
-    public void addScriptFile(Path path) {
-        addScriptFile(new ScriptFile(path));
-    }
-
     public void addScriptFile(ScriptFile file) {
         scriptFiles.add(file);
     }
@@ -46,9 +28,12 @@ public class ScriptManager {
 
         context.load();
 
-        if (scriptFiles.isEmpty()) {
-            addAllScripts(this.type.scriptPath);
+        try {
+            this.scriptFiles.addAll(new ScriptFileCollector(this.type.scriptPath).collect());
+        } catch (IOException e) {
+            OpenJS.LOGGER.error(e.getMessage());
         }
+
         for (ScriptFile file : scriptFiles) {
             file.load(context);
         }
