@@ -12,6 +12,14 @@ plugins {
     id "dev.architectury.loom" version "1.7-SNAPSHOT" // TODO: WHY I CANNOT USE 1.5 or higher
 }
 
+def props = project.properties
+def sysProps = System.getProperties()
+
+if (project.hasProperty("run_number")) {
+    println("On GitHub runs #${props.run_number}")
+}
+println("Java: ${ -> sysProps['java.version']} | JVM: ${ -> sysProps['java.vm.version']} | Vendor: ${ -> sysProps['java.vendor']} | Architecture: ${ -> sysProps['os.arch']}")
+
 apply plugin: "dev.architectury.loom"
 
 group = mod_group_id
