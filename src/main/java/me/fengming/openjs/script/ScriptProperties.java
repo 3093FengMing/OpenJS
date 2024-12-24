@@ -4,7 +4,6 @@ import me.fengming.openjs.utils.Cast;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -33,27 +32,5 @@ public final class ScriptProperties {
 
     public Map<Integer, Object> getInternal() {
         return Collections.unmodifiableMap(internal);
-    }
-
-    public void readFromLines(List<String> lines) {
-        for (String line : lines) {
-            line = line.trim();
-            if (line.isEmpty()) {
-                continue;
-            }
-            if (!line.startsWith("//")) {
-                break;
-            }
-            line = line.substring("//".length()).trim();
-            var parts = line.split(":", 2);
-            if (parts.length < 2) {
-                continue;
-            }
-            var prop = ScriptProperty.get(parts[0].trim());
-            if (prop.isPresent()) {
-                var got = prop.get().read(parts[1].trim());
-                this.put((ScriptProperty<Object>) prop.get(), got);
-            }
-        }
     }
 }
