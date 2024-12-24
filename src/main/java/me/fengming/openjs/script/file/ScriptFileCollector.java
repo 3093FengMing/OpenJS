@@ -14,6 +14,8 @@ import java.io.IOException;
 import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
@@ -49,7 +51,9 @@ public class ScriptFileCollector {
         } catch (TopoPreconditionFailed e) {
             //TODO: warn users
         }
-        return unordered;
+        var basicSorted = new ArrayList<>(unordered);
+        basicSorted.sort(Comparator.comparing(ScriptFile::getPriority).reversed());
+        return basicSorted;
     }
 
     @Nullable

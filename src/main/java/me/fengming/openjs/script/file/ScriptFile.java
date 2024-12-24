@@ -14,7 +14,7 @@ import java.nio.file.Path;
 import java.util.Objects;
 
 public class ScriptFile {
-    private final Path path;
+    final Path path;
     private Script compiledScript;
     private final ScriptProperties properties = new ScriptProperties();
 
