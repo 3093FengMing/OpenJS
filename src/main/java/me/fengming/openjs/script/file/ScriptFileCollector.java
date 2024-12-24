@@ -32,6 +32,7 @@ public class ScriptFileCollector {
         return Files.walk(root, 10, FileVisitOption.FOLLOW_LINKS)
             .filter(Files::isRegularFile)
             .map(root::relativize)
+            .filter(p -> p.getFileName().endsWith(".js"))
             .map(this::ofScriptFile)
             .filter(Objects::nonNull)
             .filter(ScriptFile::shouldEnable)
