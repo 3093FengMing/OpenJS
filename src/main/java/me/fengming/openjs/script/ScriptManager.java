@@ -1,6 +1,7 @@
 package me.fengming.openjs.script;
 
 import me.fengming.openjs.OpenJS;
+import me.fengming.openjs.script.file.ScriptFile;
 import me.fengming.openjs.utils.Utils;
 
 import java.io.IOException;
