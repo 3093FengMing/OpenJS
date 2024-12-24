@@ -22,6 +22,14 @@ public final class ScriptProperty<T> {
             .toList()
     );
     public static final ScriptProperty<Boolean> ENABLED = register("enabled", true, Boolean::valueOf);
+    public static final ScriptProperty<List<String>> AFTER = register(
+        "after",
+        Collections.emptyList(),
+        (s) -> Arrays.stream(s.split(","))
+            .map(String::trim)
+            .filter(str -> !str.isEmpty())
+            .toList()
+    );
 
     public final String name;
     public final Integer ordinal;
