@@ -18,7 +18,7 @@ public final class ScriptProperty<T> {
         Collections.emptyList(),
         (s) -> Arrays.stream(s.split(","))
             .map(String::trim)
-            .filter(str -> !str.isEmpty())
+            .filter((str) -> !str.isEmpty())
             .toList()
     );
     public static final ScriptProperty<Boolean> ENABLED = register("enabled", true, Boolean::valueOf);
@@ -27,7 +27,7 @@ public final class ScriptProperty<T> {
         Collections.emptyList(),
         (s) -> Arrays.stream(s.split(","))
             .map(String::trim)
-            .filter(str -> !str.isEmpty())
+            .filter((str) -> !str.isEmpty())
             .toList()
     );
 

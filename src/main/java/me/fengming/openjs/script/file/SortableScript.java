@@ -16,6 +16,10 @@ public class SortableScript implements TopoSortable<SortableScript> {
         this.file = file;
     }
 
+    public ScriptFile unwrap() {
+        return file;
+    }
+
     public Integer getPriority() {
         return file.getPriority();
     }

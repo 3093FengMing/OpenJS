@@ -14,8 +14,6 @@ import java.io.IOException;
 import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
@@ -48,7 +46,7 @@ public class ScriptFileCollector {
             .fromPropertyAfter()
             .sortables;
         try {
-            return TopoSort.sort(sortables).stream().map(s -> s.file).toList();
+            return TopoSort.sort(sortables).stream().map(SortableScript::unwrap).toList();
         } catch (TopoNotSolved e) {
             //TODO: warn users
         } catch (TopoPreconditionFailed e) {
@@ -57,7 +55,7 @@ public class ScriptFileCollector {
         return TopoSort
             .sort(new SortableScripts(unordered).fromPriority().sortables)
             .stream()
-            .map(s -> s.file)
+            .map(SortableScript::unwrap)
             .toList();
     }
 
