@@ -3,7 +3,7 @@ package me.fengming.openjs.utils.topo;
 import java.util.*;
 
 /**
- * trimmed version of <a href="https://github.com/ZZZank/TopoSort">TopoSort(GitHub)</></a>
+ * trimmed version of <a href="https://github.com/ZZZank/TopoSort">TopoSort(GitHub)</a>
  * @author ZZZank
  */
 public final class TopoSort {
@@ -18,19 +18,20 @@ public final class TopoSort {
             var index = e.getValue();
             var dependencies = sortable.getDependencies();
 
-            var dependencyIndexes = new HashSet<Integer>();
+            var dependencyIndexes = new TreeSet<Integer>();
             for (var dependency : dependencies) {
                 var depIndex = indexes.get(dependency);
                 dependencyIndexes.add(depIndex);
                 if (depIndex == null) {
-                    throw new TopoPreconditionFailed("%s (dependency of %s) not in input".formatted(
+                    throw new TopoPreconditionFailed(
+                        "%s (dependency of %s) not in input",
                         dependency,
                         sortable
-                    ));
+                    );
                 } else if (depIndex.equals(index)) {
-                    throw new TopoPreconditionFailed("%s claimed itself as its dependency".formatted(sortable));
+                    throw new TopoPreconditionFailed("%s claimed itself as its dependency", sortable);
                 }
-                requiredBy.computeIfAbsent(depIndex, (k) -> new HashSet<>()).add(index);
+                requiredBy.computeIfAbsent(depIndex, (k) -> new TreeSet<>()).add(index);
             }
 
             requires.put(index, dependencyIndexes);
@@ -44,7 +45,7 @@ public final class TopoSort {
             var sortable = input.get(i);
             var old = toIndexes.put(sortable, i);
             if (old != null) {
-                throw new TopoPreconditionFailed("values in index %s and %s are same values".formatted(i, old));
+                throw new TopoPreconditionFailed("values in index %s and %s are same values", i, old);
             }
         }
         return toIndexes;
@@ -56,15 +57,15 @@ public final class TopoSort {
         var indexes = indexSortables(input);
 
         //indexing dependencies
-        var requiredBy = new HashMap<Integer, Set<Integer>>();
-        var requires = new HashMap<Integer, Set<Integer>>();
+        var requiredBy = new TreeMap<Integer, Set<Integer>>();
+        var requires = new TreeMap<Integer, Set<Integer>>();
         indexSortableDependencies(indexes, requiredBy, requires);
 
         var avaliables = new ArrayList<Integer>();
-        for (var e : indexes.entrySet()) {
-            var dependencyCount = e.getKey().getDependencies().size();
-            var index = e.getValue();
-            if (dependencyCount == 0) {
+        for (var e : requires.entrySet()) {
+            var dependencies = e.getValue();
+            var index = e.getKey();
+            if (dependencies.isEmpty()) {
                 avaliables.add(index);
             }
         }
