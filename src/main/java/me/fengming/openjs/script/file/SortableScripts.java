@@ -42,6 +42,9 @@ public class SortableScripts {
         if (size == 0) {
             return Collections.emptyList();
         } else if (size == 1) {
+            // path: ab.js -> add ab
+            // no wildcard
+            ensureDotJSFile(parts);
             return parts;
         }
 
@@ -50,6 +53,8 @@ public class SortableScripts {
         // add wildcard reference
         for (int i = 2; i < size; i++) {
             // for path: ab/c/d.js, size = 3
+            // i = 0 is empty list, so skip
+            // i = 1 is 'ab', which will be '*' if transformed to wildcard reference, so skip
             // i = 2: ab/c -> add ab/*
             // i = 3: ab/c/d.js -> add ab/c/*
             var sub = parts.subList(0, i);
@@ -61,14 +66,19 @@ public class SortableScripts {
 
         // add exact reference
         // for path: ab/c/d.js, add ab/c/d
+        ensureDotJSFile(parts);
+        ref.add(String.join("/", parts));
+
+        return ref;
+    }
+
+    private static void ensureDotJSFile(List<@NotNull String> parts) {
+        var size = parts.size();
         var last = parts.get(size - 1);
         if (!last.endsWith(".js")) {
             throw new IllegalArgumentException("script file is not referring to a .js file");
         }
         parts.set(size - 1, last.substring(0, last.length() - ".js".length()));
-        ref.add(String.join("/", parts));
-
-        return ref;
     }
 
     public List<SortableScript> collect() {
@@ -100,29 +110,12 @@ public class SortableScripts {
         aaa/* -> depends on all files in aaa/
         aaa/someInvalidFile -> ignore and warn about it
          */
-        var base = this.collector.root;
-        var parts = after.split("/");
-        var last = parts[parts.length - 1];
-        validateParts(parts);
-        if ("*".equals(last)) {
-            return afterReferences.get(
-                after.substring(0, after.length() - "/*".length()) // aaa/bbb/* -> aaa/bbb
-            );
-        } else if (!last.endsWith(".js")) {
-            parts[parts.length - 1] = last + ".js";
+        validateParts(after.split("/"));
+        var references = afterReferences.get(after);
+        if (references.isEmpty()) {
+            OpenJS.LOGGER.warn("'after' property '{}' does not refers to any actual script file", after);
         }
-        for (var part : parts) {
-            base = base.resolve(part);
-            if (!Files.exists(base)) {
-                //TODO: error per script type
-                OpenJS.LOGGER.error(
-                    "'after' property '{}' cannot be resolved to any actual script file, ignoring",
-                    after
-                );
-                return Collections.emptyList();
-            }
-        }
-        return Collections.emptyList();
+        return references;
     }
 
     private void validateParts(String[] parts) {
