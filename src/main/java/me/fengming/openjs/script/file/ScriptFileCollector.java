@@ -23,7 +23,7 @@ import java.util.Objects;
  * @author ZZZank
  */
 public class ScriptFileCollector {
-    private final Path root;
+    final Path root;
 
     public ScriptFileCollector(Path root) {
         this.root = root;
@@ -43,7 +43,7 @@ public class ScriptFileCollector {
 
     public List<ScriptFile> collect() throws IOException {
         var unordered = collectUnordered();
-        var sortables = new SortableScripts(unordered, root).collect();
+        var sortables = new SortableScripts(this, unordered).collect();
         try {
             return TopoSort.sort(sortables).stream().map(s -> s.file).toList();
         } catch (TopoNotSolved e) {
