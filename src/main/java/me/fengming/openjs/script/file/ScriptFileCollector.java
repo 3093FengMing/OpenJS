@@ -43,7 +43,10 @@ public class ScriptFileCollector {
 
     public List<ScriptFile> collect() throws IOException {
         var unordered = collectUnordered();
-        var sortables = new SortableScripts(this, unordered).collect();
+        var sortables = new SortableScripts(unordered)
+            .fromPriority()
+            .fromPropertyAfter()
+            .sortables;
         try {
             return TopoSort.sort(sortables).stream().map(s -> s.file).toList();
         } catch (TopoNotSolved e) {
@@ -51,9 +54,11 @@ public class ScriptFileCollector {
         } catch (TopoPreconditionFailed e) {
             //TODO: warn users
         }
-        var basicSorted = new ArrayList<>(unordered);
-        basicSorted.sort(Comparator.comparing(ScriptFile::getPriority).reversed());
-        return basicSorted;
+        return TopoSort
+            .sort(new SortableScripts(unordered).fromPriority().sortables)
+            .stream()
+            .map(s -> s.file)
+            .toList();
     }
 
     @Nullable

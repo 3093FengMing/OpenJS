@@ -5,8 +5,8 @@ import com.google.common.collect.Multimap;
 import me.fengming.openjs.OpenJS;
 import me.fengming.openjs.script.ScriptProperty;
 import me.fengming.openjs.utils.Cast;
+import org.jetbrains.annotations.NotNull;
 
-import java.nio.file.Files;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -14,18 +14,13 @@ import java.util.stream.Collectors;
  * @author ZZZank
  */
 public class SortableScripts {
-    private final List<SortableScript> sortables;
-    private final ScriptFileCollector collector;
-    private final Multimap<String, SortableScript> afterReferences;
-    private boolean init;
+    public final List<SortableScript> sortables;
 
-    public SortableScripts(ScriptFileCollector collector, List<ScriptFile> collectedUnordered) {
-        this.collector = collector;
+    public SortableScripts(List<ScriptFile> collectedUnordered) {
         this.sortables = collectedUnordered.stream().map(SortableScript::new).toList();
-        this.afterReferences = collectAfterReferences();
     }
 
-    private Multimap<String, SortableScript> collectAfterReferences() {
+    private static Multimap<String, SortableScript> collectAfterReferences(List<SortableScript> sortables) {
         var afterReferences = HashMultimap.<String, SortableScript>create();
         for (var sortable : sortables) {
             for (var ref : collectAfterReference(sortable.file)) {
@@ -35,7 +30,7 @@ public class SortableScripts {
         return afterReferences;
     }
 
-    private Collection<String> collectAfterReference(ScriptFile file) {
+    private static Collection<String> collectAfterReference(ScriptFile file) {
         var path = file.path;
         var parts = Arrays.asList(path.toString().split(path.getFileSystem().getSeparator()));
         var size = parts.size();
@@ -81,19 +76,11 @@ public class SortableScripts {
         parts.set(size - 1, last.substring(0, last.length() - ".js".length()));
     }
 
-    public List<SortableScript> collect() {
-        if (!init) {
-            init = true;
-            fromPriority();
-            fromPropertyAfter();
-        }
-        return sortables;
-    }
-
     /**
-     * @see ScriptProperty#AFTER
+     * fill dependencies based on {@link ScriptProperty#AFTER}
+     * @return this
      */
-    private void fromPropertyAfter() {
+    public SortableScripts fromPropertyAfter() {
         for (var sortable : sortables) {
             sortable.file.getProperties()
                 .getOrDefault(ScriptProperty.AFTER)
@@ -101,6 +88,7 @@ public class SortableScripts {
                 .map(this::dependenciesFromAfter)
                 .forEach(sortable.dependencies::addAll);
         }
+        return this;
     }
 
     private Collection<SortableScript> dependenciesFromAfter(String after) {
@@ -110,6 +98,7 @@ public class SortableScripts {
         aaa/* -> depends on all files in aaa/
         aaa/someInvalidFile -> ignore and warn about it
          */
+        var afterReferences = collectAfterReferences(this.sortables);
         validateParts(after.split("/"));
         var references = afterReferences.get(after);
         if (references.isEmpty()) {
@@ -128,7 +117,11 @@ public class SortableScripts {
         }
     }
 
-    private void fromPriority() {
+    /**
+     * fill dependencies based on {@link ScriptFile#getPriority()}
+     * @return this
+     */
+    public SortableScripts fromPriority() {
         var prioritized = sortables
             .stream()
             .collect(Collectors.groupingBy(SortableScript::getPriority))
@@ -144,5 +137,6 @@ public class SortableScripts {
             }
             depends.addAll(scripts); //depended on by later scripts
         }
+        return this;
     }
 }
