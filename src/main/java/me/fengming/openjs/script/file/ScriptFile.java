@@ -44,7 +44,7 @@ public class ScriptFile {
     }
 
     public boolean shouldEnable() {
-        return properties.getOrDefault(ScriptProperty.ENABLED)
+        return properties.getOrDefault(ScriptProperty.ENABLE)
             && properties.getOrDefault(ScriptProperty.REQUIRE).stream().allMatch(ScriptFile::modLoaded);
     }
 

@@ -21,7 +21,7 @@ public final class ScriptProperty<T> {
             .filter((str) -> !str.isEmpty())
             .toList()
     );
-    public static final ScriptProperty<Boolean> ENABLED = register("enabled", true, Boolean::valueOf);
+    public static final ScriptProperty<Boolean> ENABLE = register("enable", true, Boolean::valueOf);
     public static final ScriptProperty<List<String>> AFTER = register(
         "after",
         Collections.emptyList(),

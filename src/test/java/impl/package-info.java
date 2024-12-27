@@ -1,5 +1,5 @@
 /**
- * class implementation for testing purpose
+ * helper classes for testing purpose
  * @author ZZZank
  */
 package impl;

@@ -16,12 +16,6 @@ public class ScriptSortingTest {
             .fromPriority()
             .fromPropertyAfter()
             .sortables;
-        for (var sortable : sortables) {
-            Main.LOG.info(
-                "{} depends on {}",
-                Main.fileToStr(sortable, TestPaths.PROP),
-                sortable.getDependencies().stream().map(s -> Main.fileToStr(s, TestPaths.PROP)).toList()
-            );
-        }
+        Main.LOG.info(sortables);
     }
 }

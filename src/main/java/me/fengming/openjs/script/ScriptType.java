@@ -11,6 +11,7 @@ public enum ScriptType {
     CORE(OpenJSPaths.STARTUP);
 
     public final Path scriptPath;
+
     ScriptType(Path scriptPath) {
         this.scriptPath = scriptPath;
     }

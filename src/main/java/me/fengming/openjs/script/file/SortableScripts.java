@@ -42,6 +42,7 @@ public class SortableScripts {
             .map(Path::toString)
             .collect(Collectors.toCollection(ArrayList::new));
         var size = parts.size();
+
         if (size == 0) {
             return Collections.emptyList();
         } else if (size == 1) {
