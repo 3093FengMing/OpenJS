@@ -117,3 +117,8 @@ runs/
 
 # Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
 !gradle-wrapper.jar
+
+# test log
+logs/
+# test compile output
+.compile_output/
