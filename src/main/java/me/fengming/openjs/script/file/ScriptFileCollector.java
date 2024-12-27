@@ -48,10 +48,13 @@ public class ScriptFileCollector {
         try {
             return TopoSort.sort(sortables).stream().map(SortableScript::unwrap).toList();
         } catch (TopoNotSolved e) {
-            //TODO: warn users
+            OpenJS.LOGGER.error("OpenJS is unable to solve the script dependency relations user provided (via 'after' property), falling back to priority-only mode", e);
+            //TODO: warn players in-game
         } catch (TopoPreconditionFailed e) {
-            //TODO: warn users
+            OpenJS.LOGGER.error("user declared invalid 'after' property, falling back to priority-only mode", e);
+            //TODO: warn players in-game
         }
+        // priority based dependency is always safe, so no error catching here
         return TopoSort
             .sort(new SortableScripts(unordered, this.root).fromPriority().sortables)
             .stream()

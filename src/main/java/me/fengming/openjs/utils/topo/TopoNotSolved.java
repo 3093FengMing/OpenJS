@@ -26,20 +26,6 @@ public class TopoNotSolved extends RuntimeException {
         return sortables.get(index);
     }
 
-    public String getFullMessage() {
-        var lines = new ArrayList<String>(unsolved.size() + 1);
-        lines.add(getMessage());
-        for (var entry : unsolved) {
-            var sortable = getFromIndex(entry.getKey());
-            var dependencies = entry.getValue()
-                .stream()
-                .map(this::getFromIndex)
-                .toList();
-            lines.add(sortable + " requires: " + dependencies);
-        }
-        return String.join("\n", lines);
-    }
-
     @Override
     public String getMessage() {
         var sortableInString = unsolved.stream()
