@@ -17,25 +17,25 @@ import java.util.stream.IntStream;
  */
 public class SortableScripts {
     public final List<SortableScript> sortables;
-    public final Path root;
 
-    public SortableScripts(List<? extends ScriptFile> collectedUnordered, Path root) {
-        this.sortables = collectedUnordered.stream().map(SortableScript::new).toList();
-        this.root = root;
+    public SortableScripts(Collection<? extends ScriptFile> collectedUnordered, Path root) {
+        this.sortables = collectedUnordered.stream()
+            .map((f) -> new SortableScript(root, f))
+            .toList();
     }
 
     private static Multimap<String, SortableScript> collectAfterReferences(List<SortableScript> sortables) {
         var afterReferences = HashMultimap.<String, SortableScript>create();
         for (var sortable : sortables) {
-            for (var ref : collectAfterReference(sortable.file)) {
+            for (var ref : collectAfterReference(sortable)) {
                 afterReferences.put(ref, sortable);
             }
         }
         return afterReferences;
     }
 
-    private static Collection<String> collectAfterReference(ScriptFile file) {
-        var path = file.path;
+    private static Collection<String> collectAfterReference(SortableScript file) {
+        var path = file.relative;
         var parts = IntStream.range(0, path.getNameCount())
             .mapToObj(path::getName)
             .map(Path::getFileName)
@@ -54,17 +54,16 @@ public class SortableScripts {
         var ref = new ArrayList<String>();
 
         // add wildcard reference
-        for (int i = 2; i < size; i++) {
+        for (int i = 1; i < size; i++) {
             // for path: ab/c/d.js, size = 3
-            // i = 0 is empty list, so skip
-            // i = 1 is 'ab', which will be '*' if transformed to wildcard reference, so skip
-            // i = 2: ab/c -> add ab/*
-            // i = 3: ab/c/d.js -> add ab/c/*
-            var sub = parts.subList(0, i);
-            var last = sub.get(i - 1);
-            sub.set(i - 1, "*");
+            // i = 0 is 'ab', which will be '*' if transformed to wildcard reference, so skip
+            // i = 1: ab/c -> add ab/*
+            // i = 2: ab/c/d.js -> add ab/c/*
+            var sub = parts.subList(0, i + 1);
+            var last = sub.get(i);
+            sub.set(i, "*");
             ref.add(String.join("/", sub));
-            sub.set(i - 1, last);
+            sub.set(i, last);
         }
 
         // add exact reference
@@ -89,40 +88,32 @@ public class SortableScripts {
      * @return this
      */
     public SortableScripts fromPropertyAfter() {
+        var afterReferences = collectAfterReferences(this.sortables);
         for (var sortable : sortables) {
             sortable.file.getProperties()
                 .getOrDefault(ScriptProperty.AFTER)
                 .stream()
-                .map(this::dependenciesFromAfter)
+                .map(s -> dependenciesFromAfter(s, afterReferences))
                 .forEach(sortable.dependencies::addAll);
         }
         return this;
     }
 
-    private Collection<SortableScript> dependenciesFromAfter(String after) {
+    private Collection<SortableScript> dependenciesFromAfter(String after, Multimap<String, SortableScript> afterReferences) {
         /*TODO
         aaa/bbb -> depends on aaa/bbb.js
         aaa/bbb.js -> depends on aaa/bbb.js.js, I dont know why would users name their files as such, but anyway
         aaa/* -> depends on all files in aaa/
         aaa/someInvalidFile -> ignore and warn about it
          */
-        var afterReferences = collectAfterReferences(this.sortables);
-        validateParts(after.split("/"));
+        if (after.contains("*/")) {
+            throw new IllegalArgumentException("wildcard match '*' should only be the last part of a 'after' property");
+        }
         var references = afterReferences.get(after);
         if (references.isEmpty()) {
             OpenJS.LOGGER.warn("'after' property '{}' does not refers to any actual script file", after);
         }
         return references;
-    }
-
-    private void validateParts(String[] parts) {
-        for (int i = 0; i < parts.length; i++) {
-            var part = parts[i];
-            if ("*".equals(part) && i != parts.length - 1) {
-                throw new IllegalArgumentException(
-                    "wildcard match '*' should only be the last part of a 'after' property");
-            }
-        }
     }
 
     /**

@@ -2,6 +2,7 @@ package me.fengming.openjs.script.file;
 
 import me.fengming.openjs.utils.topo.TopoSortable;
 
+import java.nio.file.Path;
 import java.util.*;
 
 /**
@@ -9,10 +10,12 @@ import java.util.*;
  */
 public class SortableScript implements TopoSortable<SortableScript> {
 
+    public final Path relative;
     public final ScriptFile file;
     public final Set<SortableScript> dependencies = new HashSet<>();
 
-    public SortableScript(ScriptFile file) {
+    public SortableScript(Path root, ScriptFile file) {
+        this.relative = root.relativize(file.path);
         this.file = file;
     }
 
@@ -37,5 +40,17 @@ public class SortableScript implements TopoSortable<SortableScript> {
     @Override
     public int hashCode() {
         return Objects.hashCode(file);
+    }
+
+    public String pathString() {
+        return this.relative.toString();
+    }
+
+    @Override
+    public String toString() {
+        return "SortableScript{"
+            + pathString()
+            + ": " + dependencies.stream().map(SortableScript::pathString).toList()
+            + '}';
     }
 }
