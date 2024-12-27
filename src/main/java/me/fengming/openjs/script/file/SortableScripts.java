@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 public class SortableScripts {
     public final List<SortableScript> sortables;
 
-    public SortableScripts(List<ScriptFile> collectedUnordered) {
+    public SortableScripts(List<? extends ScriptFile> collectedUnordered) {
         this.sortables = collectedUnordered.stream().map(SortableScript::new).toList();
     }
 

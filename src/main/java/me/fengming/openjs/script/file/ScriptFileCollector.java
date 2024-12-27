@@ -1,5 +1,6 @@
 package me.fengming.openjs.script.file;
 
+import me.fengming.openjs.OpenJS;
 import me.fengming.openjs.script.ScriptProperties;
 import me.fengming.openjs.script.ScriptProperty;
 import me.fengming.openjs.utils.Cast;
@@ -31,8 +32,7 @@ public class ScriptFileCollector {
         Utils.checkPath(root);
         return Files.walk(root, 10, FileVisitOption.FOLLOW_LINKS)
             .filter(Files::isRegularFile)
-            .map(root::relativize)
-            .filter(p -> p.getFileName().endsWith(".js"))
+            .filter(p -> p.getFileName().toString().endsWith(".js"))
             .map(this::ofScriptFile)
             .filter(Objects::nonNull)
             .filter(ScriptFile::shouldEnable)
@@ -65,6 +65,7 @@ public class ScriptFileCollector {
         try (var reader = Files.newBufferedReader(path)) {
             fillProperties(file.getProperties(), reader);
         } catch (IOException e) {
+            OpenJS.LOGGER.error("error when reading script property", e);
             return null;
         }
         return file;

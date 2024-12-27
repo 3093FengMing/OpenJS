@@ -14,7 +14,7 @@ import java.nio.file.Path;
 import java.util.Objects;
 
 public class ScriptFile {
-    final Path path;
+    public final Path path;
     private Script compiledScript;
     private final ScriptProperties properties = new ScriptProperties();
 
@@ -45,7 +45,12 @@ public class ScriptFile {
 
     public boolean shouldEnable() {
         return properties.getOrDefault(ScriptProperty.ENABLED)
-            && properties.getOrDefault(ScriptProperty.REQUIRE).stream().allMatch(ModList.get()::isLoaded);
+            && properties.getOrDefault(ScriptProperty.REQUIRE).stream().allMatch(ScriptFile::modLoaded);
+    }
+
+    private static boolean modLoaded(String modid) {
+        var modlist = ModList.get();
+        return modlist == null || modlist.isLoaded(modid);
     }
 
     @Override

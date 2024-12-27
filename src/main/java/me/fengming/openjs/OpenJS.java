@@ -12,7 +12,11 @@ import org.slf4j.Logger;
 public class OpenJS {
     public static final Logger LOGGER = LogUtils.getLogger();
 
-    public static final ScriptManager STARTUP_SCRIPT = new ScriptManager(ScriptType.STARTUP);
+    /**
+     * game dir is null when in testing, so disable this for now to prevent NPE during class init
+     * @see OpenJSPaths#GAMEDIR
+     */
+//    public static final ScriptManager STARTUP_SCRIPT = new ScriptManager(ScriptType.STARTUP);
 
     public static void init() {
         // Load plugin
@@ -21,6 +25,6 @@ public class OpenJS {
 
         OpenJSPaths.check();
 
-        STARTUP_SCRIPT.load();
+//        STARTUP_SCRIPT.load();
     }
 }
