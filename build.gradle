@@ -59,6 +59,9 @@ dependencies {
     forge("net.minecraftforge:forge:${minecraft_version}-${forge_version}")
 
     implementation("org.mozilla:rhino:${rhino_version}")
+
+    testImplementation(platform("org.junit:junit-bom:5.11.4"))
+    testImplementation("org.junit.jupiter:junit-jupiter")
 }
 
 processResources {
@@ -107,4 +110,8 @@ tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
 
     options.release = 17
+}
+
+test {
+    useJUnitPlatform()
 }
