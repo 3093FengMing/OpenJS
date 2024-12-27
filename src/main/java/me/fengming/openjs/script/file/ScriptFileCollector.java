@@ -41,7 +41,7 @@ public class ScriptFileCollector {
 
     public List<ScriptFile> collect() throws IOException {
         var unordered = collectUnordered();
-        var sortables = new SortableScripts(unordered)
+        var sortables = new SortableScripts(unordered, this.root)
             .fromPriority()
             .fromPropertyAfter()
             .sortables;
@@ -53,7 +53,7 @@ public class ScriptFileCollector {
             //TODO: warn users
         }
         return TopoSort
-            .sort(new SortableScripts(unordered).fromPriority().sortables)
+            .sort(new SortableScripts(unordered, this.root).fromPriority().sortables)
             .stream()
             .map(SortableScript::unwrap)
             .toList();

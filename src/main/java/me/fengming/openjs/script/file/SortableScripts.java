@@ -7,17 +7,21 @@ import me.fengming.openjs.script.ScriptProperty;
 import me.fengming.openjs.utils.Cast;
 import org.jetbrains.annotations.NotNull;
 
+import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * @author ZZZank
  */
 public class SortableScripts {
     public final List<SortableScript> sortables;
+    public final Path root;
 
-    public SortableScripts(List<? extends ScriptFile> collectedUnordered) {
+    public SortableScripts(List<? extends ScriptFile> collectedUnordered, Path root) {
         this.sortables = collectedUnordered.stream().map(SortableScript::new).toList();
+        this.root = root;
     }
 
     private static Multimap<String, SortableScript> collectAfterReferences(List<SortableScript> sortables) {
@@ -32,7 +36,11 @@ public class SortableScripts {
 
     private static Collection<String> collectAfterReference(ScriptFile file) {
         var path = file.path;
-        var parts = Arrays.asList(path.toString().split(path.getFileSystem().getSeparator()));
+        var parts = IntStream.range(0, path.getNameCount())
+            .mapToObj(path::getName)
+            .map(Path::getFileName)
+            .map(Path::toString)
+            .collect(Collectors.toCollection(ArrayList::new));
         var size = parts.size();
         if (size == 0) {
             return Collections.emptyList();
