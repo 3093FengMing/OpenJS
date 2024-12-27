@@ -1,7 +1,6 @@
 package test;
 
 import impl.Main;
-import impl.TestPaths;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -12,12 +11,13 @@ public class ScriptCollectingTest {
 
     @Test
     void print() {
-        Assertions.assertFalse(Main.FILES.isEmpty());
-        Main.LOG.info(Main.FILES.size());
+        var files = Main.collect(Main.ROOT);
+        Assertions.assertFalse(files.isEmpty());
+        Main.LOG.info(files.size());
         Main.LOG.info(
-            Main.FILES.stream()
+            files.stream()
             .map(f -> f.path)
-            .map(TestPaths.ROOT::relativize)
+            .map(Main.ROOT::relativize)
             .toList()
         );
     }

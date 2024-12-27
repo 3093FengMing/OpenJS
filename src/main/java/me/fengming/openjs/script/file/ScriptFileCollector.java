@@ -42,10 +42,30 @@ public class ScriptFileCollector {
             .toList();
     }
 
-    public List<ScriptFile> collect() throws IOException {
+    public List<ScriptFile> collectSorted() throws IOException {
         var unordered = collectUnordered();
+        try {
+            return sortUnsafe(unordered);
+        } catch (TopoNotSolved e) {
+            OpenJS.LOGGER.error("OpenJS is unable to solve the script dependency relations provided by user (via 'after' property), falling back to priority-only mode");
+            OpenJS.LOGGER.error(e.getMessage());
+            //TODO: warn players in-game
+        } catch (TopoPreconditionFailed e) {
+            OpenJS.LOGGER.error("user declared invalid 'after' property, falling back to priority-only mode");
+            OpenJS.LOGGER.error(e.getMessage());
+            //TODO: warn players in-game
+        }
+        return sortFallback(unordered);
+    }
+
+    public List<ScriptFile> sortUnsafe(List<ScriptFile> unordered) {
         List<SortableScript> sortables;
         if (Config.strongPriority) {
+            sortables = new SortableScripts(unordered, this.root)
+                .fromPriority() // strong priority dependencies
+                .fromPropertyAfter()
+                .sortables;
+        } else {
             var ordered = new ArrayList<>(unordered);
             ordered.sort(Comparator.comparingInt(ScriptFile::getPriority));
             // weak priority dependencies that depends on our TopoSort's stable nature to make then in priorities when
@@ -53,24 +73,15 @@ public class ScriptFileCollector {
             sortables = new SortableScripts(ordered, this.root)
                 .fromPropertyAfter()
                 .sortables;
-        } else {
-            sortables = new SortableScripts(unordered, this.root)
-                .fromPriority() // strong priority dependencies
-                .fromPropertyAfter()
-                .sortables;
         }
-        try {
-            return TopoSort.sort(sortables).stream().map(SortableScript::unwrap).toList();
-        } catch (TopoNotSolved e) {
-            OpenJS.LOGGER.error("OpenJS is unable to solve the script dependency relations user provided (via 'after' property), falling back to priority-only mode", e);
-            //TODO: warn players in-game
-        } catch (TopoPreconditionFailed e) {
-            OpenJS.LOGGER.error("user declared invalid 'after' property, falling back to priority-only mode", e);
-            //TODO: warn players in-game
-        }
+        return TopoSort.sort(sortables).stream().map(SortableScript::unwrap).toList();
+    }
+
+    public List<ScriptFile> sortFallback(List<ScriptFile> unordered) {
         // Java sort is stable
-        unordered.sort(Comparator.comparingInt(ScriptFile::getPriority));
-        return unordered;
+        var sorted = new ArrayList<>(unordered);
+        sorted.sort(Comparator.comparingInt(ScriptFile::getPriority));
+        return sorted;
     }
 
     @Nullable

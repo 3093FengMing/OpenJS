@@ -29,7 +29,7 @@ public class ScriptManager {
         context.load();
 
         try {
-            this.scriptFiles.addAll(new ScriptFileCollector(this.type.scriptPath).collect());
+            this.scriptFiles.addAll(new ScriptFileCollector(this.type.scriptPath).collectSorted());
         } catch (IOException e) {
             OpenJS.LOGGER.error(e.getMessage());
         }

@@ -6,6 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 
 /**
@@ -14,14 +15,17 @@ import java.util.List;
 public class Main {
 
     public static final Logger LOG = LogManager.getLogger("openjs_test");
-    public static final List<? extends ScriptFile> FILES = collect();
+    public static final Path ROOT = Path.of("src/test/resources");
 
-    public static List<? extends ScriptFile> collect() {
-        LOG.info(TestPaths.ROOT.toAbsolutePath());
+    public static List<? extends ScriptFile> collect(Path path) {
         try {
-            return new ScriptFileCollector(TestPaths.PROP).collectUnordered();
+            return new ScriptFileCollector(path).collectUnordered();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static List<? extends ScriptFile> collect(String relativePath) {
+        return collect(ROOT.resolve(relativePath));
     }
 }
