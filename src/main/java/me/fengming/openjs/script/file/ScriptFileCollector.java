@@ -1,5 +1,6 @@
 package me.fengming.openjs.script.file;
 
+import me.fengming.openjs.Config;
 import me.fengming.openjs.OpenJS;
 import me.fengming.openjs.script.ScriptProperties;
 import me.fengming.openjs.script.ScriptProperty;
@@ -15,6 +16,8 @@ import java.io.IOException;
 import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
@@ -41,10 +44,21 @@ public class ScriptFileCollector {
 
     public List<ScriptFile> collect() throws IOException {
         var unordered = collectUnordered();
-        var sortables = new SortableScripts(unordered, this.root)
-            .fromPriority()
-            .fromPropertyAfter()
-            .sortables;
+        List<SortableScript> sortables;
+        if (Config.strongPriority) {
+            var ordered = new ArrayList<>(unordered);
+            ordered.sort(Comparator.comparingInt(ScriptFile::getPriority));
+            // weak priority dependencies that depends on our TopoSort's stable nature to make then in priorities when
+            // possible, and break priorities when necessary
+            sortables = new SortableScripts(ordered, this.root)
+                .fromPropertyAfter()
+                .sortables;
+        } else {
+            sortables = new SortableScripts(unordered, this.root)
+                .fromPriority() // strong priority dependencies
+                .fromPropertyAfter()
+                .sortables;
+        }
         try {
             return TopoSort.sort(sortables).stream().map(SortableScript::unwrap).toList();
         } catch (TopoNotSolved e) {
@@ -54,12 +68,9 @@ public class ScriptFileCollector {
             OpenJS.LOGGER.error("user declared invalid 'after' property, falling back to priority-only mode", e);
             //TODO: warn players in-game
         }
-        // priority based dependency is always safe, so no error catching here
-        return TopoSort
-            .sort(new SortableScripts(unordered, this.root).fromPriority().sortables)
-            .stream()
-            .map(SortableScript::unwrap)
-            .toList();
+        // Java sort is stable
+        unordered.sort(Comparator.comparingInt(ScriptFile::getPriority));
+        return unordered;
     }
 
     @Nullable
