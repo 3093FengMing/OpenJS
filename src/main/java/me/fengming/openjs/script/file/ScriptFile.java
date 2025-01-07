@@ -44,9 +44,14 @@ public class ScriptFile {
         return properties.getOrDefault(ScriptProperty.PRIORITY);
     }
 
+    public boolean enableInPackMode(String mode) {
+        var selfMode = properties.getOrDefault(ScriptProperty.PACKMODE);
+        return selfMode.equals(PackMode.NONE) || selfMode.equals(mode);
+    }
+
     public boolean shouldEnable() {
         return properties.getOrDefault(ScriptProperty.ENABLE)
-            && properties.get(ScriptProperty.PACKMODE).map(PackMode.get()::equals).orElse(true)
+            && enableInPackMode(PackMode.get())
             && properties.getOrDefault(ScriptProperty.REQUIRE).stream().allMatch(ScriptFile::modLoaded);
     }
 

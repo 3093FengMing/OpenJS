@@ -15,5 +15,5 @@ public class Config {
      * ignore {@link ScriptProperty#PRIORITY} if necessary
      */
     public static boolean strongPriority = false;
-    public static String packMode = PackMode.DEFAULT;
+    public static String packMode = PackMode.NONE;
 }

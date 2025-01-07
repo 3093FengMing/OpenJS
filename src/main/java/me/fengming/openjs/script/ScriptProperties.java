@@ -1,6 +1,7 @@
 package me.fengming.openjs.script;
 
 import me.fengming.openjs.utils.Cast;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -22,15 +23,18 @@ public final class ScriptProperties {
         }
     }
 
+    @NotNull
     public <T> Optional<T> get(ScriptProperty<T> property) {
         return Optional.ofNullable(Cast.to(internal.get(property.ordinal)));
     }
 
+    @NotNull
     public <T> T getOrDefault(ScriptProperty<T> property) {
         T got = Cast.to(internal.get(property.ordinal));
         return got == null ? property.defaultValue : got;
     }
 
+    @NotNull
     public Map<Integer, Object> getInternal() {
         return Collections.unmodifiableMap(internal);
     }
