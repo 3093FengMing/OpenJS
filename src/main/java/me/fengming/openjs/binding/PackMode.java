@@ -8,7 +8,7 @@ import java.util.Objects;
  * @author ZZZank
  */
 public class PackMode {
-    public static final String DEFAULT = "default";
+    public static final String NONE = "*";
 
     public static boolean is(String mode) {
         return Config.packMode.equals(mode);
@@ -28,6 +28,6 @@ public class PackMode {
     }
 
     public static void reset() {
-        set(DEFAULT);
+        set(NONE);
     }
 }

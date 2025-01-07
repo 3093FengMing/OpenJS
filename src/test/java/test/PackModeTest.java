@@ -27,7 +27,8 @@ public class PackModeTest {
         try (var ignored = withPackMode("easy")) {
             var collector = new ScriptFileCollector(PATH);
             var collected = collector.collectUnordered();
-            Assertions.assertEquals(4, collected.size());
+            // 5 = 3(easy) + 2(nope)
+            Assertions.assertEquals(5, collected.size());
             for (var file : collected) {
                 // priority is set manually
                 Assertions.assertTrue(file.getPriority() <= 0);
@@ -42,11 +43,24 @@ public class PackModeTest {
         try (var ignored = withPackMode("hard")) {
             var collector = new ScriptFileCollector(PATH);
             var collected = collector.collectUnordered();
+            // 4 = 2(hard) + 2(nope)
             Assertions.assertEquals(4, collected.size());
             for (var file : collected) {
                 // priority is set manually
                 Assertions.assertTrue(file.getPriority() >= 0);
             }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    void none() {
+        try {
+            var collector = new ScriptFileCollector(PATH);
+            var collected = collector.collectUnordered();
+            // 2 = 2(nope)
+            Assertions.assertEquals(2, collected.size());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

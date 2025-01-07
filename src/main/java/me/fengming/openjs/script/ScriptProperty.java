@@ -1,5 +1,6 @@
 package me.fengming.openjs.script;
 
+import me.fengming.openjs.binding.PackMode;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -30,7 +31,7 @@ public final class ScriptProperty<T> {
             .filter((str) -> !str.isEmpty())
             .toList()
     );
-    public static final ScriptProperty<String> PACKMODE = register("packmode", "*", Function.identity());
+    public static final ScriptProperty<String> PACKMODE = register("packmode", PackMode.NONE, Function.identity());
 
     public final String name;
     public final Integer ordinal;
