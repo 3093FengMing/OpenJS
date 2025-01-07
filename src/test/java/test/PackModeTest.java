@@ -53,4 +53,16 @@ public class PackModeTest {
             throw new RuntimeException(e);
         }
     }
+
+    @Test
+    void none() {
+        try {
+            var collector = new ScriptFileCollector(PATH);
+            var collected = collector.collectUnordered();
+            // 2 = 2(nope)
+            Assertions.assertEquals(2, collected.size());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
