@@ -15,6 +15,7 @@ public class OpenJSContext extends Context {
     }
 
     public void init() {
+        this.setLanguageVersion(Context.VERSION_ES6);
         this.setOptimizationLevel(Config.optLevel);
     }
 

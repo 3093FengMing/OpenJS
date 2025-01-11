@@ -8,7 +8,8 @@ public class OpenJSContextFactory extends ContextFactory {
     @Override
     protected boolean hasFeature(Context cx, int featureIndex) {
         return switch (featureIndex) {
-            case Context.FEATURE_ENABLE_JAVA_MAP_ACCESS -> true;
+            case Context.FEATURE_ENABLE_JAVA_MAP_ACCESS,
+                 Context.FEATURE_INTEGER_WITHOUT_DECIMAL_PLACE -> true;
             default -> super.hasFeature(cx, featureIndex);
         };
     }
