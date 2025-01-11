@@ -1,6 +1,6 @@
 package me.fengming.openjs.event;
 
-import me.fengming.openjs.plugin.IRegistration;
+import me.fengming.openjs.registry.IRegistration;
 import me.fengming.openjs.script.ScriptType;
 
 import java.util.HashMap;

@@ -1,7 +1,5 @@
 package me.fengming.openjs.registry;
 
-import me.fengming.openjs.plugin.IRegistration;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Set;
