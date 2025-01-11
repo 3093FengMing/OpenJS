@@ -8,6 +8,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author FengMing
+ */
 public class ScriptManager {
     private final ScriptType type;
     private OpenJSContextFactory factory;
@@ -23,7 +26,7 @@ public class ScriptManager {
     }
 
     public void load() {
-        factory = new OpenJSContextFactory(this);
+        factory = new OpenJSContextFactory();
         OpenJSContext context = (OpenJSContext) factory.enterContext();
 
         context.load();

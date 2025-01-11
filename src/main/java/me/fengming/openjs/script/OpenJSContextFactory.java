@@ -4,10 +4,13 @@ import org.mozilla.javascript.Context;
 import org.mozilla.javascript.ContextFactory;
 
 public class OpenJSContextFactory extends ContextFactory {
-    public final ScriptManager manager;
 
-    public OpenJSContextFactory(ScriptManager manager) {
-        this.manager = manager;
+    @Override
+    protected boolean hasFeature(Context cx, int featureIndex) {
+        return switch (featureIndex) {
+            case Context.FEATURE_ENABLE_JAVA_MAP_ACCESS -> true;
+            default -> super.hasFeature(cx, featureIndex);
+        };
     }
 
     @Override

@@ -1,9 +1,12 @@
 package me.fengming.openjs.script;
 
 import me.fengming.openjs.Config;
-import me.fengming.openjs.plugin.OpenJSRegistries;
+import me.fengming.openjs.registry.OpenJSRegistries;
 import org.mozilla.javascript.*;
 
+/**
+ * @author FengMing
+ */
 public class OpenJSContext extends Context {
     public Scriptable topScope;
 
@@ -20,23 +23,21 @@ public class OpenJSContext extends Context {
         OpenJSRegistries.BINDINGS.apply(this::addBinding);
     }
 
-    protected void addBinding(Binding binding) {
-        for (String alias : binding.alias()) {
-            Object v = binding.value();
-            /* defineClass
-            if (v instanceof Scriptable sv) {
-                try {
-                    ScriptableObject.defineClass(topScope, sv.getClass());
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
+    protected void addBinding(String key, Binding binding) {
+        Object v = binding.value();
+        /* defineClass
+        if (v instanceof Scriptable sv) {
+            try {
+                ScriptableObject.defineClass(topScope, sv.getClass());
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             }
-            */
-            if (v instanceof Class<?> cv) {
-                ScriptableObject.putProperty(topScope, alias, new NativeJavaClass(topScope, cv));
-            } else {
-                ScriptableObject.putProperty(topScope, alias, javaToJS(v, topScope));
-            }
+        }
+        */
+        if (v instanceof Class<?> cv) {
+            ScriptableObject.putProperty(topScope, key, new NativeJavaClass(topScope, cv));
+        } else {
+            ScriptableObject.putProperty(topScope, key, javaToJS(v, topScope));
         }
     }
 }

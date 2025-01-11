@@ -14,6 +14,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
 
+/**
+ * @author FengMing
+ */
 public class ScriptFile {
     public final Path path;
     private Script compiledScript;
@@ -33,6 +36,9 @@ public class ScriptFile {
     }
 
     public void run(OpenJSContext context) {
+        if (compiledScript == null) {
+            throw new IllegalStateException("Script not loaded");
+        }
         compiledScript.exec(context, context.topScope);
     }
 

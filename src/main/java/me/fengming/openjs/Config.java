@@ -3,6 +3,9 @@ package me.fengming.openjs;
 import me.fengming.openjs.binding.PackMode;
 import me.fengming.openjs.script.ScriptProperty;
 
+/**
+ * @author FengMing
+ */
 public class Config {
     public static int optLevel = 1;
     /**

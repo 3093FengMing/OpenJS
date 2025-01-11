@@ -7,8 +7,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 
+/**
+ * @author FengMing
+ */
 public class OpenJSPlugins {
     public static final List<IOpenJSPlugin> plugins = new ArrayList<>();
 
@@ -25,9 +27,5 @@ public class OpenJSPlugins {
                 OpenJS.LOGGER.error(e.getMessage());
             }
         }
-    }
-
-    public static void postAction(Consumer<IOpenJSPlugin> consumer) {
-        plugins.forEach(consumer);
     }
 }

@@ -1,12 +1,13 @@
 package me.fengming.openjs.plugin;
 
-import me.fengming.openjs.script.Binding;
+import me.fengming.openjs.registry.BindingRegistry;
+import me.fengming.openjs.registry.EventGroupRegistry;
 
 public interface IOpenJSPlugin {
 
     void load();
 
-    default void registerBinding(String name, Object value) {
-        OpenJSRegistries.BINDINGS.register(new Binding(name, value));
-    }
+    void registerBinding(BindingRegistry registry);
+
+    void registerEvent(EventGroupRegistry registry);
 }
