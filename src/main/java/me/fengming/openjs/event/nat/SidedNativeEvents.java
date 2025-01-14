@@ -5,7 +5,7 @@ import me.fengming.openjs.script.ScriptType;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.GenericEvent;
-import net.minecraftforge.eventbus.api.IEventBus;
+
 import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.function.Consumer;
@@ -50,7 +50,7 @@ public final class SidedNativeEvents {
         Class<T> eventType,
         Consumer<T> handler
     ) {
-        var packed = new PackedHandler<>(OpenJSMod.selectBus(eventType), handler);
+        var packed = new PackedHandler<>(this, OpenJSMod.selectBus(eventType), handler);
         packedHandlers.add(packed);
         packed.bus.addListener(priority, receiveCancelled, eventType, packed);
     }
@@ -70,28 +70,9 @@ public final class SidedNativeEvents {
         Class<T> eventType,
         Consumer<T> handler
     ) {
-        var packed = new PackedHandler<>(OpenJSMod.selectBus(eventType), handler);
+        var packed = new PackedHandler<>(this, OpenJSMod.selectBus(eventType), handler);
         packedHandlers.add(packed);
         packed.bus.addGenericListener(genericClassFilter, priority, receiveCancelled, eventType, packed);
-    }
-
-    private final class PackedHandler<T> implements Consumer<T> {
-        private final IEventBus bus;
-        private final Consumer<T> inner;
-
-        private PackedHandler(IEventBus bus, Consumer<T> inner) {
-            this.bus = bus;
-            this.inner = inner;
-        }
-
-        @Override
-        public void accept(T event) {
-            try {
-                inner.accept(event);
-            } catch (Exception e) {
-                SidedNativeEvents.this.type.logger.error("Error when handling native event", e);
-            }
-        }
     }
 
     public int getHandlerCount() {

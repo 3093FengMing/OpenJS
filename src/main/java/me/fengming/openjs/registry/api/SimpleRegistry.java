@@ -1,4 +1,4 @@
-package me.fengming.openjs.registry;
+package me.fengming.openjs.registry.api;
 
 import java.util.Collection;
 import java.util.HashMap;

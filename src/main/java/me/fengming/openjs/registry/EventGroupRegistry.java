@@ -1,6 +1,7 @@
 package me.fengming.openjs.registry;
 
 import me.fengming.openjs.event.EventGroup;
+import me.fengming.openjs.registry.api.SimpleRegistry;
 
 /**
  * @author FengMing

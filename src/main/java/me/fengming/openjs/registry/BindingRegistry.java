@@ -1,5 +1,6 @@
 package me.fengming.openjs.registry;
 
+import me.fengming.openjs.registry.api.TypedRegistry;
 import me.fengming.openjs.script.Binding;
 import me.fengming.openjs.script.ScriptType;
 
