@@ -23,7 +23,9 @@ public class OpenJSBuiltinPlugin implements IOpenJSPlugin {
         registry.register("PackMode", PackMode.class);
 
         // event
-        OpenJSRegistries.EVENT_GROUPS.apply((name, group) -> registry.register(name, new EventGroupWrapper(group)));
+        OpenJSRegistries.EVENT_GROUPS
+            .getNullable(registry.type)
+            .apply((name, group) -> registry.register(name, new EventGroupWrapper(group)));
     }
 
     @Override

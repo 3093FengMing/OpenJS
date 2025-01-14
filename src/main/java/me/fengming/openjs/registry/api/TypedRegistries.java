@@ -3,14 +3,13 @@ package me.fengming.openjs.registry.api;
 import me.fengming.openjs.script.ScriptType;
 
 import java.util.*;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
  * @author ZZZank
  */
-public class TypedRegistries<T extends IRegistration, R extends SimpleRegistry<T>> {
+public class TypedRegistries<R extends SimpleRegistry<?>> {
 
     private final Map<ScriptType, R> registries;
 
@@ -33,6 +32,10 @@ public class TypedRegistries<T extends IRegistration, R extends SimpleRegistry<T
         return Optional.ofNullable(registries.get(type));
     }
 
+    public R getNullable(ScriptType type) {
+        return registries.get(type);
+    }
+
     public Map<ScriptType, R> getRegistries() {
         return Collections.unmodifiableMap(registries);
     }
@@ -44,12 +47,6 @@ public class TypedRegistries<T extends IRegistration, R extends SimpleRegistry<T
     public void forEach(Consumer<R> action) {
         for (R registry : registries.values()) {
             action.accept(registry);
-        }
-    }
-
-    public void apply(BiConsumer<String, T> action) {
-        for (var registry : registries.values()) {
-            registry.apply(action);
         }
     }
 }

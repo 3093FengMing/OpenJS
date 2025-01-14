@@ -27,9 +27,8 @@ public class OpenJS {
         // Load plugin
         ModList.get().getModFiles().forEach(OpenJSPlugins::load);
         postAction(IOpenJSPlugin::load);
-        postAction(p -> p.registerEvent(OpenJSRegistries.EVENT_GROUPS));
-        postAction(p -> p.registerBinding(OpenJSRegistries.BINDINGS));
-
+        postAction(plugin -> OpenJSRegistries.EVENT_GROUPS.forEach(plugin::registerEvent));
+        postAction(plugin -> OpenJSRegistries.BINDINGS.forEach(plugin::registerBinding));
         OpenJSPaths.check();
 
         STARTUP_SCRIPT = new ScriptManager(ScriptType.STARTUP);
