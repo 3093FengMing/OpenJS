@@ -33,6 +33,11 @@ public class OpenJSMod {
         OpenJS.LOGGER.info("OpenJS Common Setup");
     }
 
+    /**
+     * {@link IModBusEvent} -> mod event bus
+     * <p>
+     * regular {@link Event} -> {@link MinecraftForge#EVENT_BUS}
+     */
     public static IEventBus selectBus(Class<? extends Event> eventType) {
         return IModBusEvent.class.isAssignableFrom(eventType)
             ? MOD_BUS
