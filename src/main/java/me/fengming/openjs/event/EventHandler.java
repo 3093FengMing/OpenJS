@@ -1,8 +1,10 @@
 package me.fengming.openjs.event;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import me.fengming.openjs.script.ScriptType;
 import me.fengming.openjs.utils.Cast;
 import me.fengming.openjs.utils.annotations.HideFromJS;
+import org.jetbrains.annotations.Nullable;
 import org.mozilla.javascript.BaseFunction;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Function;
@@ -16,7 +18,9 @@ import java.util.*;
 public class EventHandler<T extends OpenJSEvent> extends BaseFunction {
     protected String name;
     protected ScriptType type;
+
     protected List<EventListener> listeners = new ArrayList<>();
+    protected Object2ObjectOpenHashMap<Object, List<EventListener>> extraListener = new Object2ObjectOpenHashMap<>();
 
     private boolean sortedAndFrozen;
 
@@ -30,34 +34,53 @@ public class EventHandler<T extends OpenJSEvent> extends BaseFunction {
         return this.name;
     }
 
+    @HideFromJS
+    public void post(T event) {
+        post(event, null);
+    }
+
     /**
      * Post event parameters to the handler in JS, which will be called in priority order
      */
     @HideFromJS
-    public void post(T event) {
+    public void post(T event, @Nullable Object extras) {
         if (!sortedAndFrozen) {
             listeners.sort(EventListener::compareTo);
+            for (var list : extraListener.values()) {
+                list.sort(EventListener::compareTo);
+            }
             sortedAndFrozen = true;
         }
-        for (var container : listeners) {
-            container.handler().onEvent(event);
+        List<EventListener> localListener = extras == null ? listeners : extraListener.get(extras);
+        for (var listener : localListener) {
+            listener.handler().onEvent(event);
         }
     }
 
-    public void addListener(IEventHandler handler) {
-        listeners.add(new EventListener(handler, null, 0));
+    public void addListener(IEventHandler handler, int priority, @Nullable Object extras) {
+        EventListener listener = new EventListener(handler, priority);
+        if (extras == null) {
+            listeners.add(listener);
+            return;
+        }
+
+        if (extraListener.containsKey(extras)) {
+            extraListener.get(extras).add(listener);
+        } else {
+            extraListener.put(extras, Collections.singletonList(listener));
+        }
     }
 
     public void addListener(IEventHandler handler, int priority) {
-        listeners.add(new EventListener(handler, null, priority));
+        addListener(handler, priority, null);
     }
 
     public void addListener(IEventHandler handler, Object extras) {
-        listeners.add(new EventListener(handler, extras, 0));
+        addListener(handler, 0, extras);
     }
 
-    public void addListener(IEventHandler handler, int priority, Object extras) {
-        listeners.add(new EventListener(handler, extras, priority));
+    public void addListener(IEventHandler handler) {
+        addListener(handler, 0, null);
     }
 
     /**
