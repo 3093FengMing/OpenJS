@@ -25,7 +25,7 @@ public class EventGroup implements IRegistration {
         return this.name;
     }
 
-    public <T extends OpenJSEvent> EventHandler<T> add(String name, ScriptType type, Class<T> eventType) {
+    public <T extends OpenJSEvent> EventHandler<T> add(String name, ScriptType type) {
         var handler = new EventHandler<T>(name, type);
         handlers.put(name, handler);
         return handler;
