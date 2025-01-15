@@ -8,10 +8,12 @@ import org.mozilla.javascript.*;
  * @author FengMing
  */
 public class OpenJSContext extends Context {
+    public final ScriptType type;
     public Scriptable topScope;
 
-    public OpenJSContext(ContextFactory contextFactory) {
-        super(contextFactory);
+    public OpenJSContext(OpenJSContextFactory factory) {
+        super(factory);
+        type = factory.type;
     }
 
     public void init() {
@@ -21,7 +23,7 @@ public class OpenJSContext extends Context {
 
     public void load() {
         this.topScope = initSafeStandardObjects();
-        OpenJSRegistries.BINDINGS.apply(this::addBinding);
+        OpenJSRegistries.BINDINGS.get(type).ifPresent(b -> b.apply(this::addBinding));
     }
 
     protected void addBinding(String key, Binding binding) {

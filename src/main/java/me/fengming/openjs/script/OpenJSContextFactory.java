@@ -5,6 +5,12 @@ import org.mozilla.javascript.ContextFactory;
 
 public class OpenJSContextFactory extends ContextFactory {
 
+    public final ScriptType type;
+
+    public OpenJSContextFactory(ScriptType type) {
+        this.type = type;
+    }
+
     @Override
     protected boolean hasFeature(Context cx, int featureIndex) {
         return switch (featureIndex) {
@@ -15,7 +21,7 @@ public class OpenJSContextFactory extends ContextFactory {
     }
 
     @Override
-    protected Context makeContext() {
+    protected OpenJSContext makeContext() {
         OpenJSContext context = new OpenJSContext(this);
         context.init();
         return context;

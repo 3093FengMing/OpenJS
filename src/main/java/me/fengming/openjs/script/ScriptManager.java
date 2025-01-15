@@ -26,18 +26,24 @@ public class ScriptManager {
     }
 
     public void load() {
-        factory = new OpenJSContextFactory();
+        factory = new OpenJSContextFactory(type);
+        // 1. enterContext() will attach context to current thread, and will do nothing when there's already one attached
+        // 2. Rhino internals heavily rely on 'context on current thread'
+        // 3. there's no guarantee that server/client/startup/core will use different thread
+        // so, ScriptType specific things should NOT be in context, which, unfortunately, affects bindings
         OpenJSContext context = (OpenJSContext) factory.enterContext();
 
+        // doc of enterContext(): Get a context associated with the current thread, creating one if need be
+        // context might not be newly created, how to solve this
         context.load();
 
         try {
             this.scriptFiles.addAll(new ScriptFileCollector(this.type.scriptPath).collectSorted());
         } catch (IOException e) {
-            OpenJS.LOGGER.error(e.getMessage());
+            type.logger.error(e.getMessage());
         }
 
-        for (ScriptFile file : scriptFiles) {
+        for (var file : scriptFiles) {
             file.load(context);
         }
     }
