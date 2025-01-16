@@ -14,6 +14,10 @@ public enum ScriptType {
     CORE(OpenJSPaths.STARTUP);
 
     public final Path scriptPath;
+    /**
+     * TODO: make a LoggerJS
+     * (next PR)
+     */
     public final Logger logger = LogManager.getLogger("%s:%s".formatted(OpenJSMod.MODID, name()));
 
     ScriptType(Path scriptPath) {

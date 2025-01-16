@@ -1,5 +1,6 @@
 package me.fengming.openjs.event.nat;
 
+import me.fengming.openjs.script.ScriptType;
 import net.minecraftforge.eventbus.api.IEventBus;
 
 import java.util.function.Consumer;
@@ -8,12 +9,12 @@ import java.util.function.Consumer;
  * @author ZZZank
  */
 final class PackedHandler<T> implements Consumer<T> {
-    private final SidedNativeEvents events;
+    final ScriptType type;
     final IEventBus bus;
     final Consumer<T> inner;
 
     PackedHandler(SidedNativeEvents events, IEventBus bus, Consumer<T> inner) {
-        this.events = events;
+        this.type = events.type;
         this.bus = bus;
         this.inner = inner;
     }
@@ -23,7 +24,7 @@ final class PackedHandler<T> implements Consumer<T> {
         try {
             inner.accept(event);
         } catch (Exception e) {
-            events.type.logger.error("Error when handling native event", e);
+            type.logger.error("Error when handling native event", e);
         }
     }
 }
