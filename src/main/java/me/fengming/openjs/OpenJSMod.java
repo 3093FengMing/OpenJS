@@ -20,13 +20,11 @@ public class OpenJSMod {
     private static IEventBus MOD_BUS;
 
     public OpenJSMod(FMLJavaModLoadingContext context) {
-        MOD_BUS = context.getModEventBus();
-
-        MOD_BUS.addListener(this::commonSetup);
-
-        MOD_BUS.addListener(EventPriority.LOWEST, ForgeEventHandler::handleRegister);
-
         OpenJS.init();
+        
+        MOD_BUS = context.getModEventBus();
+        MOD_BUS.addListener(this::commonSetup);
+        MOD_BUS.addListener(EventPriority.LOWEST, ForgeEventHandler::handleRegister);
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {

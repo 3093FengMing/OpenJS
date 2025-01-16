@@ -52,6 +52,8 @@ public class EventHandler<T extends OpenJSEvent> extends BaseFunction {
             sortedAndFrozen = true;
         }
         List<EventListener> localListener = extras == null ? listeners : extraListener.get(extras);
+        // The handler to the extras may not exist, ignore it
+        if (localListener == null) return;
         for (var listener : localListener) {
             listener.handler().onEvent(event);
         }

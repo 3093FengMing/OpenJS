@@ -12,12 +12,20 @@ import java.util.Map;
 public class TypeWrappers {
     public static final Map<Class<?>, TypeWrapper<?>> wrappers = new IdentityHashMap<>();
 
-    public static  <T> void register(Class<T> target, TypeWrapper<T> wrapper) {
+    public static <T> void register(Class<T> target, TypeWrapper<T> wrapper) {
         wrappers.put(target, wrapper);
+    }
+
+    public static <T> void registerSimple(Class<T> target, SimpleTypeWrapper<T> wrapper) {
+        register(target, wrapper);
     }
 
     public static <T> TypeWrapper<T> get(Class<T> target) {
         return Cast.to(wrappers.get(target));
+    }
+
+    public static boolean canWrap(Class<?> target, Object from) {
+        return hasWrapper(target) && wrap(target, from).getClass() == target;
     }
 
     public static boolean hasWrapper(Class<?> target) {

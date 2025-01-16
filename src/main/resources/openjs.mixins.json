@@ -5,6 +5,7 @@
   "compatibilityLevel": "JAVA_8",
   "refmap": "openjs.refmap.json",
   "mixins": [
+    "rhino.NativeJavaObjectMixin"
   ],
   "client": [
   ],

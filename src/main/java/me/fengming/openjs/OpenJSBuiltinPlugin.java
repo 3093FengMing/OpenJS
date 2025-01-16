@@ -7,6 +7,8 @@ import me.fengming.openjs.registry.BindingRegistry;
 import me.fengming.openjs.registry.EventGroupRegistry;
 import me.fengming.openjs.registry.OpenJSRegistries;
 import me.fengming.openjs.wrapper.EventGroupWrapper;
+import me.fengming.openjs.wrapper.TypeWrappers;
+import net.minecraft.resources.ResourceLocation;
 
 /**
  * @author FengMing
@@ -14,7 +16,10 @@ import me.fengming.openjs.wrapper.EventGroupWrapper;
 public class OpenJSBuiltinPlugin implements IOpenJSPlugin {
     @Override
     public void load() {
-        //registerBinding();
+        TypeWrappers.registerSimple(
+                ResourceLocation.class,
+                from -> ResourceLocation.tryParse(String.valueOf(from))
+        );
     }
 
     @Override

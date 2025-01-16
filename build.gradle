@@ -82,11 +82,12 @@ shadowJar {
     dependencies {
         include (dependency "org.mozilla:rhino")
     }
-    archiveClassifier.set("")
+    archiveClassifier.set("shadow")
 }
 
 remapJar {
-    setInput(shadowJar.archiveFile)
+    // from(shadowJar.archiveFile)
+    inputs.file(shadowJar.archiveFile)
     dependsOn(shadowJar)
 }
 
