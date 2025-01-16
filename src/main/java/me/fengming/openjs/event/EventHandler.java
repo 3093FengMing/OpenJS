@@ -67,7 +67,9 @@ public class EventHandler<T extends OpenJSEvent> extends BaseFunction {
         if (extraListener.containsKey(extras)) {
             extraListener.get(extras).add(listener);
         } else {
-            extraListener.put(extras, Collections.singletonList(listener));
+            List<EventListener> l = new ArrayList<>();
+            l.add(listener);
+            extraListener.put(extras, l);
         }
     }
 
