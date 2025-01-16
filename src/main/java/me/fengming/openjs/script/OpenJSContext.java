@@ -22,7 +22,7 @@ public class OpenJSContext extends Context {
     }
 
     public void load() {
-        this.topScope = initSafeStandardObjects();
+        this.topScope = initStandardObjects();
         OpenJSRegistries.BINDINGS.get(type).ifPresent(b -> b.apply(this::addBinding));
         setWrapFactory(new OpenJSWrapFactory());
     }
