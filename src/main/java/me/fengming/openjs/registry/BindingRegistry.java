@@ -1,13 +1,15 @@
 package me.fengming.openjs.registry;
 
+import me.fengming.openjs.registry.api.TypedRegistry;
 import me.fengming.openjs.script.Binding;
+import me.fengming.openjs.script.ScriptType;
 
 /**
  * @author FengMing
  */
-public class BindingRegistry extends SimpleRegistry<Binding> {
-    public BindingRegistry() {
-        super("binding");
+public class BindingRegistry extends TypedRegistry<Binding> {
+    public BindingRegistry(ScriptType type) {
+        super("binding", type);
     }
 
     public void register(String key, Object value) {
