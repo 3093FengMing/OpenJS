@@ -20,6 +20,7 @@ public class OpenJSBuiltinPlugin implements IOpenJSPlugin {
     @Override
     public void registerBinding(BindingRegistry registry) {
         // placeholder for testing
+        registry.register("System", System.class);
         registry.register("PackMode", PackMode.class);
 
         // event

@@ -15,9 +15,4 @@ public class EventGroupRegistry extends TypedRegistry<EventGroup> {
     public void register(EventGroup group) {
         register(group.getName(), group);
     }
-
-    @Override
-    public EventGroup register(String key, EventGroup event) {
-        return super.register(key, event);
-    }
 }

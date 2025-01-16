@@ -16,11 +16,11 @@ import java.util.*;
  * @author FengMing
  */
 public class EventHandler<T extends OpenJSEvent> extends BaseFunction {
-    protected String name;
-    protected ScriptType type;
+    private final String name;
+    private ScriptType type;
 
-    protected List<EventListener> listeners = new ArrayList<>();
-    protected Object2ObjectOpenHashMap<Object, List<EventListener>> extraListener = new Object2ObjectOpenHashMap<>();
+    private final List<EventListener> listeners = new ArrayList<>();
+    private final Object2ObjectOpenHashMap<Object, List<EventListener>> extraListener = new Object2ObjectOpenHashMap<>();
 
     private boolean sortedAndFrozen;
 
