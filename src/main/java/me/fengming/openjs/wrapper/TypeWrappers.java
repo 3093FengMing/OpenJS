@@ -24,10 +24,6 @@ public class TypeWrappers {
         return Cast.to(wrappers.get(target));
     }
 
-    public static boolean canWrap(Class<?> target, Object from) {
-        return hasWrapper(target) && wrap(target, from).getClass() == target;
-    }
-
     public static boolean hasWrapper(Class<?> target) {
         return wrappers.containsKey(target);
     }
@@ -37,7 +33,7 @@ public class TypeWrappers {
         if (wrapper instanceof SimpleTypeWrapper<T> simple) {
             return simple.wrap(from);
         }
-        throw new IllegalStateException(String.format("Cannot wrap %s to %s.", target, wrapper));
+        throw new IllegalStateException(String.format("Cannot wrap %s to %s.", from, target));
     }
 
     public static <T> T wrap(Class<T> target, Object from, Context context) {
