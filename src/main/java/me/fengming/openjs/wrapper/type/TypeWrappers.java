@@ -20,9 +20,24 @@ public class TypeWrappers {
             throw new IllegalArgumentException("Wrapper for class " + target.getName() + " already exists");
         }
         ALL.put(target, wrapper);
+
+        final var wrapper1D = new ArrayTypeWrapper<>(wrapper, target);
+        ALL.put(wrapper1D.target, wrapper1D);
+
+        final var wrapper2D = new ArrayTypeWrapper<>(wrapper1D, wrapper1D.target);
+        ALL.put(wrapper2D.target, wrapper2D);
+
+        final var wrapper3D = new ArrayTypeWrapper<>(wrapper2D, wrapper2D.target);
+        ALL.put(wrapper3D.target, wrapper3D);
+
+        // 4D?
     }
 
-    public static <T> void register(Class<T> target, ProxiedWrapper.Validator validator, ProxiedWrapper.Wrapper<T> wrapper) {
+    public static <T> void register(
+        Class<T> target,
+        ProxiedWrapper.Validator validator,
+        ProxiedWrapper.Wrapper<T> wrapper
+    ) {
         register(target, new ProxiedWrapper<>(validator, wrapper));
     }
 
