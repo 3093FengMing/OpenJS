@@ -25,12 +25,17 @@ public final class ArrayTypeWrapper<T> implements TypeWrapper<T[]> {
 
     @Override
     public boolean canWrap(Object from, Class<?> to) {
-        return from instanceof Collection<?>;
+        return from instanceof Collection<?> c
+            && (c.isEmpty() || componentWrapper.canWrap(c.iterator().next(), to.componentType()));
     }
 
     @Override
     public T[] wrap(Object from, Class<?> to) {
         final var casted = Cast.<Collection<?>>to(from);
+        if (casted.isEmpty()) {
+            return empty;
+        }
+
         final var toComponent = to.componentType();
 
         final var size = casted.size();
