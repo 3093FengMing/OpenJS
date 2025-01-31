@@ -46,7 +46,18 @@ public class TypeWrappers {
 
     @Nullable
     public static <T> TypeWrapper<T> get(Class<T> target) {
-        return Cast.to(ALL.get(target));
+        var got = ALL.get(target);
+        if (got != null) {
+            return Cast.to(got);
+        }
+        if (Enum.class.isAssignableFrom(target)) {
+            EnumTypeWrapper<?> result;
+            synchronized (EnumTypeWrapper.CACHE) {
+                result = EnumTypeWrapper.CACHE.computeIfAbsent(target, EnumTypeWrapper::new);
+            }
+            return Cast.to(result);
+        }
+        return null;
     }
 
     @Nullable
