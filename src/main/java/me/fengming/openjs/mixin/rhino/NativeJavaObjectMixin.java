@@ -1,6 +1,6 @@
 package me.fengming.openjs.mixin.rhino;
 
-import me.fengming.openjs.wrapper.TypeWrappers;
+import me.fengming.openjs.wrapper.type.TypeWrappers;
 import org.mozilla.javascript.NativeJavaObject;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -17,16 +17,14 @@ public class NativeJavaObjectMixin {
     private static void injectHeadGetConversionWeight(Object fromObj, Class<?> to, CallbackInfoReturnable<Integer> cir) {
         if (TypeWrappers.hasWrapper(to)) {
             cir.setReturnValue(1);
-            cir.cancel();
         }
     }
 
     @Inject(method = "coerceTypeImpl", at = @At("HEAD"), cancellable = true)
     private static void injectHeadCoerceTypeImpl(Class<?> type, Object value, CallbackInfoReturnable<Object> cir) {
-        if (TypeWrappers.hasWrapper(type)) {
-            Object wrapped = TypeWrappers.wrap(type, value);
-            cir.setReturnValue(wrapped);
-            cir.cancel();
+        final var wrapper = TypeWrappers.getValidated(type, value, type);
+        if (wrapper != null) {
+            cir.setReturnValue(wrapper.wrap(value, type));
         }
     }
 }
