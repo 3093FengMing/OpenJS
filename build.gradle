@@ -9,7 +9,7 @@ plugins {
     id 'eclipse'
     id 'idea'
     id 'com.github.johnrengelman.shadow' version '8.1.1'
-    id "dev.architectury.loom" version "1.7-SNAPSHOT"
+    id "dev.architectury.loom" version "1.10-SNAPSHOT"
 }
 
 def props = project.properties
