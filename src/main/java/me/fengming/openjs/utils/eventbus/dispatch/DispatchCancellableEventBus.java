@@ -10,17 +10,21 @@ import java.util.function.Predicate;
 /**
  * @author ZZZank
  */
-public interface DispatchCancellableEventBus<E, K> extends CancellableEventBus<E>, DispatchEventBus<E, K> {
+public interface DispatchCancellableEventBus<E, K> extends CancellableEventBus<E> {
 
     static <E, K> DispatchCancellableEventBus<E, K> create(Class<E> eventType, EventDispatchKey<E, K> dispatchKey) {
         return new DispatchCancellableEventBusImpl<>(eventType, dispatchKey, new ConcurrentHashMap<>());
     }
+
+    EventDispatchKey<E, K> dispatchKey();
 
     EventListenerToken<E> addListener(K key, byte priority, Predicate<E> listener);
 
     default EventListenerToken<E> addListener(K key, Predicate<E> listener) {
         return addListener(key, (byte) 0, listener);
     }
+
+    boolean post(E event, K key);
 
     @Override
     default boolean post(E event) {

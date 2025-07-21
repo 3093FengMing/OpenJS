@@ -3,6 +3,7 @@ package me.fengming.openjs.utils.eventbus.impl;
 import me.fengming.openjs.utils.eventbus.CancellableEventBus;
 import me.fengming.openjs.utils.eventbus.EventListenerToken;
 
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -55,6 +56,18 @@ public class CancellableEventBusImpl<E>
                     }
                     return false;
                 };
+        }
+    }
+
+    private record NeverCancelListener<E>(Consumer<E> consumer) implements Predicate<E> {
+        private NeverCancelListener(Consumer<E> consumer) {
+            this.consumer = Objects.requireNonNull(consumer);
+        }
+
+        @Override
+        public boolean test(E e) {
+            consumer.accept(e);
+            return false;
         }
     }
 }

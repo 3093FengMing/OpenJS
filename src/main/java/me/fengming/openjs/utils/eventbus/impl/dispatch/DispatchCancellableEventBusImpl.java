@@ -5,11 +5,9 @@ import me.fengming.openjs.utils.eventbus.EventListenerToken;
 import me.fengming.openjs.utils.eventbus.dispatch.DispatchCancellableEventBus;
 import me.fengming.openjs.utils.eventbus.dispatch.EventDispatchKey;
 import me.fengming.openjs.utils.eventbus.impl.CancellableEventBusImpl;
-import me.fengming.openjs.utils.eventbus.impl.NeverCancelListener;
 
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 /**
@@ -17,7 +15,6 @@ import java.util.function.Predicate;
  */
 public class DispatchCancellableEventBusImpl<E, K> extends CancellableEventBusImpl<E>
     implements DispatchCancellableEventBus<E, K> {
-
     private final EventDispatchKey<E, K> dispatchKey;
     private final Map<K, CancellableEventBus<E>> dispatched;
 
@@ -32,29 +29,19 @@ public class DispatchCancellableEventBusImpl<E, K> extends CancellableEventBusIm
     }
 
     @Override
-    public final EventDispatchKey<E, K> dispatchKey() {
+    public EventDispatchKey<E, K> dispatchKey() {
         return dispatchKey;
     }
 
     @Override
-    public final EventListenerToken<E> addListener(K key, byte priority, Consumer<E> listener) {
-        return addListener(key, priority, new NeverCancelListener<>(listener));
-    }
-
-    @Override
-    public final EventListenerToken<E> addListener(K key, Consumer<E> listener) {
-        return addListener(key, (byte) 0, listener);
-    }
-
-    @Override
-    public final EventListenerToken<E> addListener(K key, byte priority, Predicate<E> listener) {
+    public EventListenerToken<E> addListener(K key, byte priority, Predicate<E> listener) {
         return this.dispatched
             .computeIfAbsent(key, k -> new CancellableEventBusImpl<>(this.eventType()))
             .addListener(priority, listener);
     }
 
     @Override
-    public final boolean post(E event, K key) {
+    public boolean post(E event, K key) {
         if (super.post(event)) {
             return true;
         }
