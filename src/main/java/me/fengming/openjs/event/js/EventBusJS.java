@@ -18,11 +18,11 @@ import java.util.function.Predicate;
 /**
  * @author ZZZank
  */
-public abstract class EventBusJS<E, BUS extends EventBus<E>> extends BaseFunction {
-    private final BUS bus;
+public class EventBusJS<E> extends BaseFunction {
+    private final EventBus<E> bus;
     private final List<EventListenerToken<E>> tokens;
 
-    protected EventBusJS(BUS bus) {
+    public EventBusJS(EventBus<E> bus) {
         this.bus = Objects.requireNonNull(bus);
         tokens = new ArrayList<>();
     }
@@ -35,16 +35,12 @@ public abstract class EventBusJS<E, BUS extends EventBus<E>> extends BaseFunctio
         return bus instanceof DispatchEventBus<?, ?>;
     }
 
-    public BUS bus() {
+    public EventBus<E> bus() {
         return bus;
     }
 
     public List<EventListenerToken<E>> tokens() {
         return tokens;
-    }
-
-    public boolean post(E event) {
-        return this.bus.post(event);
     }
 
     @Override
@@ -56,18 +52,18 @@ public abstract class EventBusJS<E, BUS extends EventBus<E>> extends BaseFunctio
         if (canDispatch()) {
             if (canCancel()) {
                 token = args.length > 1
-                    ? registerDispatchCancellable(args[1], args[0]) // onEvent("key", (e) => true)
-                    : registerCancellable(args[0]); // onEvent((e) => true)
+                    ? registerDispatchCancellable(args[0], args[1])
+                    : registerDispatchCancellable(args[0], null);
             } else {
                 token = args.length > 1
-                    ? registerDispatch(args[1], args[0]) // onEvent("key", (e) => {})
-                    : register(args[0]); // onEvent((e) => {})
+                    ? registerDispatch(args[0], args[1])
+                    : registerDispatch(args[0], null);
             }
         } else {
             if (canCancel()) {
-                token = registerCancellable(args[0]); // onEvent((e) => true)
+                token = registerCancellable(args[0]);
             } else {
-                token = register(args[0]); // onEvent((e) => {})
+                token = register(args[0]);
             }
         }
         this.tokens.add(token);
@@ -98,41 +94,5 @@ public abstract class EventBusJS<E, BUS extends EventBus<E>> extends BaseFunctio
             bus.dispatchKey().transformInput(key),
             (Predicate<E>) Context.jsToJava(listener, Predicate.class)
         );
-    }
-
-    public static class Regular<E> extends EventBusJS<E, EventBus<E>> {
-
-        public Regular(EventBus<E> bus) {
-            super(bus);
-        }
-    }
-
-    public static class Cancellable<E> extends EventBusJS<E, CancellableEventBus<E>> {
-
-        public Cancellable(CancellableEventBus<E> bus) {
-            super(bus);
-        }
-    }
-
-    public static class Dispatch<E, K> extends EventBusJS<E, DispatchEventBus<E, K>> {
-
-        public Dispatch(DispatchEventBus<E, K> bus) {
-            super(bus);
-        }
-
-        public boolean post(E event, K key) {
-            return bus().post(event, key);
-        }
-    }
-
-    public static class DispatchCancellable<E, K> extends EventBusJS<E, DispatchCancellableEventBus<E, K>> {
-
-        public DispatchCancellable(DispatchCancellableEventBus<E, K> bus) {
-            super(bus);
-        }
-
-        public boolean post(E event, K key) {
-            return bus().post(event, key);
-        }
     }
 }
