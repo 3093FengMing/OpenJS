@@ -28,24 +28,24 @@ public class DispatchEventBusImpl<E, K> extends EventBusImpl<E> implements Dispa
     }
 
     @Override
-    public EventListenerToken<E> addListener(K key, byte priority, Consumer<E> listener) {
+    public final EventListenerToken<E> addListener(K key, byte priority, Consumer<E> listener) {
         return this.dispatched
             .computeIfAbsent(key, k -> new EventBusImpl<>(this.eventType()))
             .addListener(priority, listener);
     }
 
     @Override
-    public EventListenerToken<E> addListener(K key, Consumer<E> listener) {
+    public final EventListenerToken<E> addListener(K key, Consumer<E> listener) {
         return addListener(key, (byte) 0, listener);
     }
 
     @Override
-    public EventDispatchKey<E, K> dispatchKey() {
+    public final EventDispatchKey<E, K> dispatchKey() {
         return dispatchKey;
     }
 
     @Override
-    public boolean post(E event, K key) {
+    public final boolean post(E event, K key) {
         super.post(event);
 
         key = this.dispatchKey.transformInput(key);
