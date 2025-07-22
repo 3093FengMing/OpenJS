@@ -19,7 +19,7 @@ public interface EventBus<E> {
 
     EventListenerToken<E> addListener(byte priority, Consumer<E> listener);
 
-    /// @return always `false` for non-cancellable event bus
+    /// @return always `false` for non-cancellable event bus, `true` if this bus is cancellable and at least one event listener returned `true`
     /// @see CancellableEventBus#post(Object)
     boolean post(E event);
 
