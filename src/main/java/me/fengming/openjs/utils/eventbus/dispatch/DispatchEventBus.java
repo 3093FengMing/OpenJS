@@ -12,11 +12,11 @@ import java.util.function.Consumer;
  */
 public interface DispatchEventBus<E, K> extends EventBus<E> {
 
-    static <E, K> DispatchEventBus<E, K> create(Class<E> eventType, EventDispatchKey<E, K> dispatchKey) {
+    static <E, K> DispatchEventBus<E, K> create(Class<E> eventType, DispatchKey<E, K> dispatchKey) {
         return new DispatchEventBusImpl<>(eventType, dispatchKey, new ConcurrentHashMap<>());
     }
 
-    EventDispatchKey<E, K> dispatchKey();
+    DispatchKey<E, K> dispatchKey();
 
     EventListenerToken<E> addListener(K key, byte priority, Consumer<E> listener);
 
