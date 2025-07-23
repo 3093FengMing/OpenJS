@@ -11,10 +11,8 @@ import org.mozilla.javascript.WrapFactory;
 public class OpenJSWrapFactory extends WrapFactory {
     @Override
     public Scriptable wrapAsJavaObject(Context cx, Scriptable scope, Object javaObject, Class<?> staticType) {
-        var wrapped = TypeWrappers.hasWrapper(javaObject.getClass())
-            ? TypeWrappers.get(javaObject.getClass()).wrap(javaObject, javaObject.getClass())
-            // wrapping an object to the same type? WHAT?
-            : javaObject;
+        var wrapper = TypeWrappers.get(javaObject.getClass());
+        var wrapped = wrapper == null ? javaObject : wrapper.wrap(javaObject, javaObject.getClass());
         return super.wrapAsJavaObject(cx, scope, wrapped, staticType);
     }
 }
