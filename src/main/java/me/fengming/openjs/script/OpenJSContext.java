@@ -1,6 +1,7 @@
 package me.fengming.openjs.script;
 
 import me.fengming.openjs.Config;
+import me.fengming.openjs.binding.base.Binding;
 import me.fengming.openjs.registry.OpenJSRegistries;
 import org.mozilla.javascript.*;
 
@@ -43,5 +44,6 @@ public class OpenJSContext extends Context {
         } else {
             ScriptableObject.putProperty(topScope, key, javaToJS(v, topScope));
         }
+        binding.onLoad(this.type);
     }
 }

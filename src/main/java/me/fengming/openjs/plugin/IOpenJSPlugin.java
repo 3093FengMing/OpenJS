@@ -1,6 +1,6 @@
 package me.fengming.openjs.plugin;
 
-import me.fengming.openjs.registry.BindingRegistry;
+import me.fengming.openjs.binding.base.BindingRegistry;
 import me.fengming.openjs.registry.EventGroupRegistry;
 
 public interface IOpenJSPlugin {
