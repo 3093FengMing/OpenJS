@@ -34,12 +34,16 @@ public final class ScriptProperty<T> {
     public static final ScriptProperty<String> PACKMODE = register("packmode", PackMode.NONE, Function.identity());
 
     public final String name;
-    public final Integer ordinal;
+    public final int ordinal;
     public final T defaultValue;
     public final Function<String, @Nullable T> reader;
 
     public static Optional<ScriptProperty<?>> get(String name) {
         return Optional.ofNullable(ALL.get(name));
+    }
+
+    public static int getLastIndex() {
+        return indexCurrent;
     }
 
     public static <T> ScriptProperty<T> register(String name, T defaultValue, Function<String, @Nullable T> reader) {
