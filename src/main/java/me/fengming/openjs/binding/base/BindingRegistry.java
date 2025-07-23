@@ -1,7 +1,6 @@
-package me.fengming.openjs.registry;
+package me.fengming.openjs.binding.base;
 
 import me.fengming.openjs.registry.api.TypedRegistry;
-import me.fengming.openjs.script.Binding;
 import me.fengming.openjs.script.ScriptType;
 
 /**
@@ -13,6 +12,10 @@ public class BindingRegistry extends TypedRegistry<Binding> {
     }
 
     public void register(String key, Object value) {
-        super.register(key, new Binding(value));
+        register(Binding.create(key, value));
+    }
+
+    public void register(Binding binding) {
+        super.register(binding.name(), binding);
     }
 }
