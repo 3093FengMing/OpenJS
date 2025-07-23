@@ -14,7 +14,7 @@ import java.util.function.IntSupplier;
  */
 public class EventBusJSTest {
     private static final EventGroupJS EVENT_GROUP = new EventGroupJS();
-    private static final EventBusJS<IntSupplier> EVENT_BUS =
+    private static final EventBusJS.Cancellable<IntSupplier> EVENT_BUS =
         EVENT_GROUP.addBus("supply", CancellableEventBus.create(IntSupplier.class));
 
     private static final IntSupplier EVENT = () -> 42;
