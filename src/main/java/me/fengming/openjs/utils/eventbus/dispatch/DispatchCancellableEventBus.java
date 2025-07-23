@@ -12,7 +12,7 @@ import java.util.function.Predicate;
  */
 public interface DispatchCancellableEventBus<E, K> extends CancellableEventBus<E>, DispatchEventBus<E, K> {
 
-    static <E, K> DispatchCancellableEventBus<E, K> create(Class<E> eventType, EventDispatchKey<E, K> dispatchKey) {
+    static <E, K> DispatchCancellableEventBus<E, K> create(Class<E> eventType, DispatchKey<E, K> dispatchKey) {
         return new DispatchCancellableEventBusImpl<>(eventType, dispatchKey, new ConcurrentHashMap<>());
     }
 

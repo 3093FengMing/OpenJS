@@ -1,6 +1,6 @@
 package me.fengming.openjs.utils.eventbus.impl.dispatch;
 
-import me.fengming.openjs.utils.eventbus.dispatch.EventDispatchKey;
+import me.fengming.openjs.utils.eventbus.dispatch.DispatchKey;
 
 import java.util.Objects;
 import java.util.function.Function;
@@ -8,13 +8,13 @@ import java.util.function.Function;
 /**
  * @author ZZZank
  */
-public record EventDispatchKeyImpl<E, K>(
+public record DispatchKeyImpl<E, K>(
     Class<K> keyType,
     Function<E, K> toKey,
     Function<Object, K> inputTransformer
-) implements EventDispatchKey<E, K> {
+) implements DispatchKey<E, K> {
 
-    public EventDispatchKeyImpl(Class<K> keyType, Function<E, K> toKey, Function<Object, K> inputTransformer) {
+    public DispatchKeyImpl(Class<K> keyType, Function<E, K> toKey, Function<Object, K> inputTransformer) {
         this.keyType = Objects.requireNonNull(keyType);
         this.toKey = Objects.requireNonNull(toKey);
         this.inputTransformer = Objects.requireNonNull(inputTransformer);

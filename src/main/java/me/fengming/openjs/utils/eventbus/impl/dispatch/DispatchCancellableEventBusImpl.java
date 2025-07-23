@@ -3,7 +3,7 @@ package me.fengming.openjs.utils.eventbus.impl.dispatch;
 import me.fengming.openjs.utils.eventbus.CancellableEventBus;
 import me.fengming.openjs.utils.eventbus.EventListenerToken;
 import me.fengming.openjs.utils.eventbus.dispatch.DispatchCancellableEventBus;
-import me.fengming.openjs.utils.eventbus.dispatch.EventDispatchKey;
+import me.fengming.openjs.utils.eventbus.dispatch.DispatchKey;
 import me.fengming.openjs.utils.eventbus.impl.CancellableEventBusImpl;
 import me.fengming.openjs.utils.eventbus.impl.NeverCancelListener;
 
@@ -18,12 +18,12 @@ import java.util.function.Predicate;
 public class DispatchCancellableEventBusImpl<E, K> extends CancellableEventBusImpl<E>
     implements DispatchCancellableEventBus<E, K> {
 
-    private final EventDispatchKey<E, K> dispatchKey;
+    private final DispatchKey<E, K> dispatchKey;
     private final Map<K, CancellableEventBus<E>> dispatched;
 
     public DispatchCancellableEventBusImpl(
         Class<E> eventType,
-        EventDispatchKey<E, K> dispatchKey,
+        DispatchKey<E, K> dispatchKey,
         Map<K, CancellableEventBus<E>> dispatched
     ) {
         super(eventType);
@@ -32,7 +32,7 @@ public class DispatchCancellableEventBusImpl<E, K> extends CancellableEventBusIm
     }
 
     @Override
-    public final EventDispatchKey<E, K> dispatchKey() {
+    public final DispatchKey<E, K> dispatchKey() {
         return dispatchKey;
     }
 

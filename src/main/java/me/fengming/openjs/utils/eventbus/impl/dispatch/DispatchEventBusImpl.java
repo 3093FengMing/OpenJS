@@ -2,7 +2,7 @@ package me.fengming.openjs.utils.eventbus.impl.dispatch;
 
 import me.fengming.openjs.utils.eventbus.EventBus;
 import me.fengming.openjs.utils.eventbus.EventListenerToken;
-import me.fengming.openjs.utils.eventbus.dispatch.EventDispatchKey;
+import me.fengming.openjs.utils.eventbus.dispatch.DispatchKey;
 import me.fengming.openjs.utils.eventbus.dispatch.DispatchEventBus;
 import me.fengming.openjs.utils.eventbus.impl.EventBusImpl;
 
@@ -14,12 +14,12 @@ import java.util.function.Consumer;
  * @author ZZZank
  */
 public class DispatchEventBusImpl<E, K> extends EventBusImpl<E> implements DispatchEventBus<E, K> {
-    private final EventDispatchKey<E, K> dispatchKey;
+    private final DispatchKey<E, K> dispatchKey;
     private final Map<K, EventBus<E>> dispatched;
 
     public DispatchEventBusImpl(
         Class<E> eventType,
-        EventDispatchKey<E, K> dispatchKey,
+        DispatchKey<E, K> dispatchKey,
         Map<K, EventBus<E>> dispatchBackend
     ) {
         super(eventType);
@@ -40,7 +40,7 @@ public class DispatchEventBusImpl<E, K> extends EventBusImpl<E> implements Dispa
     }
 
     @Override
-    public final EventDispatchKey<E, K> dispatchKey() {
+    public final DispatchKey<E, K> dispatchKey() {
         return dispatchKey;
     }
 
