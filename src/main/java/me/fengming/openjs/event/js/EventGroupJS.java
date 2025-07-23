@@ -1,6 +1,7 @@
 package me.fengming.openjs.event.js;
 
 import me.fengming.openjs.binding.base.Binding;
+import me.fengming.openjs.registry.api.IRegistration;
 import me.fengming.openjs.script.ScriptType;
 import me.fengming.openjs.utils.eventbus.CancellableEventBus;
 import me.fengming.openjs.utils.eventbus.EventBus;
@@ -15,7 +16,7 @@ import java.util.Objects;
 /**
  * @author ZZZank
  */
-public class EventGroupJS {
+public class EventGroupJS implements IRegistration {
     private final String name;
     private final Map<String, EventBusJS<?, ?>> buses;
 
