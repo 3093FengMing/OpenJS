@@ -6,7 +6,6 @@ import me.fengming.openjs.plugin.IOpenJSPlugin;
 import me.fengming.openjs.binding.base.BindingRegistry;
 import me.fengming.openjs.registry.EventGroupRegistry;
 import me.fengming.openjs.registry.OpenJSRegistries;
-import me.fengming.openjs.wrapper.EventGroupWrapper;
 import me.fengming.openjs.wrapper.type.TypeWrappers;
 import net.minecraft.resources.ResourceLocation;
 
@@ -31,7 +30,7 @@ public class OpenJSBuiltinPlugin implements IOpenJSPlugin {
         // event
         OpenJSRegistries.EVENT_GROUPS
             .getNullable(registry.type)
-            .apply((name, group) -> registry.register(name, new EventGroupWrapper(group)));
+            .apply((name, group) -> registry.register(group.asBinding()));
     }
 
     @Override
