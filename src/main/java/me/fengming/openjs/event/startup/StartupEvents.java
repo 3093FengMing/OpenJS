@@ -19,9 +19,9 @@ public interface StartupEvents {
         DispatchEventBus.create(
             RegisterEvent.class, DispatchKey.create(
                 ResourceLocation.class,
-                e -> e.getRegistryKey().location(),
-                BuiltinTypeWrappers::resourceLocation
+                e -> e.getRegistryKey().location()
             )
-        )
+        ),
+        BuiltinTypeWrappers::resourceLocation
     );
 }

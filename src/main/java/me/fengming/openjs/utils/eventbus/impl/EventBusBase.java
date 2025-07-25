@@ -1,5 +1,6 @@
 package me.fengming.openjs.utils.eventbus.impl;
 
+import me.fengming.openjs.utils.eventbus.CommonPriority;
 import me.fengming.openjs.utils.eventbus.EventListenerToken;
 
 import java.util.ArrayList;
@@ -26,7 +27,7 @@ public abstract class EventBusBase<EVENT, LISTENER> {
     }
 
     public final EventListenerToken<EVENT> addListener(LISTENER listener) {
-        return addListener((byte) 0, listener);
+        return addListener(CommonPriority.NORMAL, listener);
     }
 
     public final EventListenerToken<EVENT> addListener(byte priority, LISTENER listener) {
@@ -37,7 +38,7 @@ public abstract class EventBusBase<EVENT, LISTENER> {
     }
 
     public final boolean unregister(EventListenerToken<EVENT> token) {
-        var changed = this.tokens.remove(token);
+        var changed = token instanceof EventListenerTokenImpl<?, ?> && this.tokens.remove(token);
         if (changed) {
             built = null;
         }

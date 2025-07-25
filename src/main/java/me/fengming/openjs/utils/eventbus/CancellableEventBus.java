@@ -16,4 +16,9 @@ public interface CancellableEventBus<E> extends EventBus<E> {
     EventListenerToken<E> addListener(Predicate<E> listener);
 
     EventListenerToken<E> addListener(byte priority, Predicate<E> listener);
+
+    @Override
+    default <E_ extends E> CancellableEventBus<E_> cast() {
+        return (CancellableEventBus<E_>) this;
+    }
 }

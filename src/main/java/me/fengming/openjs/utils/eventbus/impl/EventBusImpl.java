@@ -8,14 +8,14 @@ import java.util.stream.Stream;
 /**
  * @author ZZZank
  */
-public class EventBusImpl<E> extends EventBusBase<E, Consumer<E>> implements EventBus<E> {
+public final class EventBusImpl<E> extends EventBusBase<E, Consumer<E>> implements EventBus<E> {
 
     public EventBusImpl(Class<E> eventType) {
         super(eventType);
     }
 
     @Override
-    public final boolean post(E event) {
+    public boolean post(E event) {
         getBuilt(EventBusImpl::compile).accept(event);
         return false;
     }

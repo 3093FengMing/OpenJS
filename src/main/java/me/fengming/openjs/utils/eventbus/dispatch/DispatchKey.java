@@ -8,16 +8,8 @@ import java.util.function.Function;
  * @author ZZZank
  */
 public interface DispatchKey<E, K> {
-    static <E, K> DispatchKey<E, K> create(
-        Class<K> keyType,
-        Function<E, K> toKey,
-        Function<Object, K> inputTransformer
-    ) {
-        return new DispatchKeyImpl<>(keyType, toKey, inputTransformer);
-    }
-
-    static <E, K> DispatchKey<E, K> create(Class<K> keyType, Function<E, K> eventToKey) {
-        return create(keyType, eventToKey, o -> keyType.isInstance(o) ? (K) o : null);
+    static <E, K> DispatchKey<E, K> create(Class<K> keyType, Function<E, K> toKey) {
+        return new DispatchKeyImpl<>(keyType, toKey);
     }
 
     static <E, K> DispatchKey<E, K> create(Class<K> keyType) {
@@ -26,7 +18,5 @@ public interface DispatchKey<E, K> {
 
     Class<K> keyType();
 
-    K toKey(E event);
-
-    K transformInput(Object input);
+    K eventToKey(E event);
 }
