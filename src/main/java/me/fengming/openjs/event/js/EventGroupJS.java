@@ -12,13 +12,14 @@ import org.mozilla.javascript.ScriptableObject;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
 
 /**
  * @author ZZZank
  */
 public class EventGroupJS implements IRegistration {
     private final String name;
-    private final Map<String, EventBusJS<?, ?>> buses;
+    private final Map<String, EventBusJS<?, ?, ?>> buses;
 
     public EventGroupJS(String name) {
         this.name = Objects.requireNonNull(name);
@@ -29,11 +30,11 @@ public class EventGroupJS implements IRegistration {
         return name;
     }
 
-    public Map<String, EventBusJS<?, ?>> buses() {
+    public Map<String, EventBusJS<?, ?, ?>> buses() {
         return buses;
     }
 
-    private <BUS extends EventBusJS<?, ?>> BUS addBusImpl(String name, BUS bus) {
+    private <BUS extends EventBusJS<?, ?, ?>> BUS addBusImpl(String name, BUS bus) {
         if (name == null) {
             throw new IllegalArgumentException("'name' should not be null");
         } else if (this.buses.containsKey(name)) {
@@ -57,6 +58,22 @@ public class EventGroupJS implements IRegistration {
 
     public <E, K> EventBusJS.DispatchCancellable<E, K> addBus(String name, DispatchCancellableEventBus<E, K> bus) {
         return addBusImpl(name, new EventBusJS.DispatchCancellable<>(bus));
+    }
+
+    public <E, K> EventBusJS.Dispatch<E, K> addBus(
+        String name,
+        DispatchEventBus<E, K> bus,
+        Function<Object, K> inputTransformer
+    ) {
+        return addBusImpl(name, new EventBusJS.Dispatch<>(bus, inputTransformer));
+    }
+
+    public <E, K> EventBusJS.DispatchCancellable<E, K> addBus(
+        String name,
+        DispatchCancellableEventBus<E, K> bus,
+        Function<Object, K> inputTransformer
+    ) {
+        return addBusImpl(name, new EventBusJS.DispatchCancellable<>(bus, inputTransformer));
     }
 
     public Binding asBinding() {
@@ -83,7 +100,7 @@ public class EventGroupJS implements IRegistration {
         };
     }
 
-    private static <E, BUS extends EventBus<E>> void unregisterBus(EventBusJS<E, BUS> busJS) {
+    private static <E, BUS extends EventBus<E>> void unregisterBus(EventBusJS<E, BUS, ?> busJS) {
         var bus = busJS.bus();
         for (var token : busJS.tokens()) {
             bus.unregister(token);

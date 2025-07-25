@@ -10,23 +10,16 @@ import java.util.function.Function;
  */
 public record DispatchKeyImpl<E, K>(
     Class<K> keyType,
-    Function<E, K> toKey,
-    Function<Object, K> inputTransformer
+    Function<E, K> toKey
 ) implements DispatchKey<E, K> {
 
-    public DispatchKeyImpl(Class<K> keyType, Function<E, K> toKey, Function<Object, K> inputTransformer) {
+    public DispatchKeyImpl(Class<K> keyType, Function<E, K> toKey) {
         this.keyType = Objects.requireNonNull(keyType);
         this.toKey = Objects.requireNonNull(toKey);
-        this.inputTransformer = Objects.requireNonNull(inputTransformer);
     }
 
     @Override
-    public K toKey(E event) {
+    public K eventToKey(E event) {
         return toKey.apply(event);
-    }
-
-    @Override
-    public K transformInput(Object input) {
-        return inputTransformer.apply(input);
     }
 }

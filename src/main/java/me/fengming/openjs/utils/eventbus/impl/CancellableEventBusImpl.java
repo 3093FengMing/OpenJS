@@ -1,6 +1,7 @@
 package me.fengming.openjs.utils.eventbus.impl;
 
 import me.fengming.openjs.utils.eventbus.CancellableEventBus;
+import me.fengming.openjs.utils.eventbus.CommonPriority;
 import me.fengming.openjs.utils.eventbus.EventListenerToken;
 
 import java.util.function.Consumer;
@@ -10,7 +11,7 @@ import java.util.stream.Stream;
 /**
  * @author ZZZank
  */
-public class CancellableEventBusImpl<E>
+public final class CancellableEventBusImpl<E>
     extends EventBusBase<E, Predicate<E>> implements CancellableEventBus<E> {
 
     public CancellableEventBusImpl(Class<E> eventType) {
@@ -18,17 +19,17 @@ public class CancellableEventBusImpl<E>
     }
 
     @Override
-    public final EventListenerToken<E> addListener(byte priority, Consumer<E> listener) {
+    public EventListenerToken<E> addListener(byte priority, Consumer<E> listener) {
         return addListener(priority, new NeverCancelListener<>(listener));
     }
 
     @Override
-    public final EventListenerToken<E> addListener(Consumer<E> listener) {
-        return addListener((byte) 0, listener);
+    public EventListenerToken<E> addListener(Consumer<E> listener) {
+        return addListener(CommonPriority.NORMAL, new NeverCancelListener<>(listener));
     }
 
     @Override
-    public final boolean post(E event) {
+    public boolean post(E event) {
         return getBuilt(CancellableEventBusImpl::compile).test(event);
     }
 
