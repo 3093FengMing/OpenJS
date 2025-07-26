@@ -1,4 +1,4 @@
-package me.fengming.openjs;
+package me.fengming.openjs.plugin;
 
 import me.fengming.openjs.binding.PackMode;
 import me.fengming.openjs.event.startup.StartupEvents;
