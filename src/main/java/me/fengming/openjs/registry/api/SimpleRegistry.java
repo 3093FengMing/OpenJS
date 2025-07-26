@@ -10,7 +10,8 @@ import java.util.function.BiConsumer;
  * @author FengMing
  */
 public class SimpleRegistry<T extends IRegistration> {
-    protected HashMap<String, T> map = new HashMap<>();
+    protected Map<String, T> map = new HashMap<>();
+    protected Map<T, String> reversed = new HashMap<>();
     protected String id;
 
     public SimpleRegistry(String id) {
@@ -22,7 +23,12 @@ public class SimpleRegistry<T extends IRegistration> {
     }
 
     public T register(String key, T registration) {
+        Objects.requireNonNull(key, "null registry key is invalid");
+        if (map.containsKey(key)) {
+            throw new IllegalArgumentException(String.format("'%s' already registered", key));
+        }
         map.put(key, registration);
+        reversed.put(registration, key);
         return registration;
     }
 
@@ -38,24 +44,20 @@ public class SimpleRegistry<T extends IRegistration> {
         map.forEach(consumer);
     }
 
-    public Optional<T> get(String name) {
+    public Optional<T> getValue(String name) {
         return Optional.of(map.get(name));
     }
 
-    public Optional<String> searchKey(T value) {
-        return map.entrySet()
-            .stream()
-            .filter(entry -> entry.getValue().equals(value))
-            .findFirst()
-            .map(Map.Entry::getKey);
+    public Optional<String> getKey(T value) {
+        return Optional.of(reversed.get(value));
     }
 
     public Codec<T> byNameCodec() {
         return Codec.STRING.flatXmap(
-            (key) -> this.get(key)
+            (key) -> this.getValue(key)
                 .map(DataResult::success)
                 .orElseGet(() -> DataResult.error(() -> "Unknown registry key in " + this.id + ": " + key)),
-            (value) -> this.searchKey(value)
+            (value) -> this.getKey(value)
                 .map(DataResult::success)
                 .orElseGet(() -> DataResult.error(() -> "Unknown registry element in " + this.id + ":" + value))
         );
