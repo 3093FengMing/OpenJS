@@ -13,8 +13,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fml.ModList;
 import org.slf4j.Logger;
 
-import java.util.function.Consumer;
-
 /**
  * @author FengMing
  */
@@ -30,9 +28,11 @@ public class OpenJS {
     public static void init() {
         // Load plugin
         ModList.get().getModFiles().forEach(OpenJSPlugins::load);
-        postAction(IOpenJSPlugin::load);
-        postAction(plugin -> OpenJSRegistries.EVENT_GROUPS.forEach(plugin::registerEvent));
-        postAction(plugin -> OpenJSRegistries.BINDINGS.forEach(plugin::registerBinding));
+
+        OpenJSPlugins.forEach(IOpenJSPlugin::load);
+        OpenJSPlugins.forEach(p -> OpenJSRegistries.EVENT_GROUPS.forEach(p::registerEvent));
+        OpenJSPlugins.forEach(p -> OpenJSRegistries.BINDINGS.forEach(p::registerBinding));
+
         OpenJSPaths.check();
 
         STARTUP_SCRIPT = new ScriptManager(ScriptType.STARTUP);
@@ -45,9 +45,5 @@ public class OpenJS {
 
     public static ScriptManager getStartupScript() {
         return STARTUP_SCRIPT;
-    }
-
-    public static void postAction(Consumer<IOpenJSPlugin> consumer) {
-        OpenJSPlugins.plugins.forEach(consumer);
     }
 }
