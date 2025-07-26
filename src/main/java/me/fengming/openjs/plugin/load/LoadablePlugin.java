@@ -6,19 +6,21 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import me.fengming.openjs.plugin.IOpenJSPlugin;
 import me.fengming.openjs.plugin.load.condition.PluginLoadCondition;
 
+import java.util.Optional;
+
 /**
  * @author ZZZank
  */
-public record LoadablePlugin(String name, PluginLoadCondition condition) {
+public record LoadablePlugin(String name, Optional<PluginLoadCondition> condition) {
     public static final Codec<LoadablePlugin> CODEC = RecordCodecBuilder.create(
         builder -> builder.group(
             Codec.STRING.fieldOf("name").forGetter(LoadablePlugin::name),
-            PluginLoadCondition.CODEC.fieldOf("condition").forGetter(LoadablePlugin::condition)
+            PluginLoadCondition.CODEC.optionalFieldOf("condition").forGetter(LoadablePlugin::condition)
         ).apply(builder, LoadablePlugin::new)
     );
 
     public DataResult<IOpenJSPlugin> load() {
-        if (!condition.test()) {
+        if (condition.isPresent() && !condition.get().test()) {
             return DataResult.error(() -> "Condition not met");
         }
         try {
