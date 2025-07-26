@@ -1,0 +1,34 @@
+package me.fengming.openjs.plugin.load;
+
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import me.fengming.openjs.plugin.IOpenJSPlugin;
+import me.fengming.openjs.plugin.load.condition.PluginLoadCondition;
+
+/**
+ * @author ZZZank
+ */
+public record LoadablePlugin(String name, PluginLoadCondition condition) {
+    public static final Codec<LoadablePlugin> CODEC = RecordCodecBuilder.create(
+        builder -> builder.group(
+            Codec.STRING.fieldOf("name").forGetter(LoadablePlugin::name),
+            PluginLoadCondition.CODEC.fieldOf("condition").forGetter(LoadablePlugin::condition)
+        ).apply(builder, LoadablePlugin::new)
+    );
+
+    public DataResult<IOpenJSPlugin> load() {
+        if (!condition.test()) {
+            return DataResult.error(() -> "Condition not met");
+        }
+        try {
+            var result =  Class.forName(name)
+                .asSubclass(IOpenJSPlugin.class)
+                .getConstructor()
+                .newInstance();
+            return DataResult.success(result);
+        } catch (Exception e) {
+            return DataResult.error(e::toString);
+        }
+    }
+}
