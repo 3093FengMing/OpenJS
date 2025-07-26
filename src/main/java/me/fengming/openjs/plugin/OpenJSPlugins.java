@@ -13,6 +13,7 @@ import net.minecraftforge.forgespi.language.IModFileInfo;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -20,10 +21,18 @@ import java.util.function.Consumer;
  * @author FengMing
  */
 public class OpenJSPlugins {
-    public static final List<IOpenJSPlugin> plugins = new ArrayList<>();
+    private static final List<IOpenJSPlugin> PLUGINS = new ArrayList<>();
 
     static {
         MinecraftForge.EVENT_BUS.post(new PluginLoadConditionTypeRegistryEvent(PluginLoadConditionType.REGISTRY));
+    }
+
+    public static List<IOpenJSPlugin> view() {
+        return Collections.unmodifiableList(PLUGINS);
+    }
+
+    public static void forEach(Consumer<? super IOpenJSPlugin> action) {
+        PLUGINS.forEach(action);
     }
 
     public static void load(IModFileInfo info) {
@@ -41,7 +50,7 @@ public class OpenJSPlugins {
                     .map(Pair::getFirst)
                     .map(LoadablePlugin::load)
                     .flatMap(result -> result.resultOrPartial(errorReporter))
-                    .ifPresent(plugins::add);
+                    .ifPresent(PLUGINS::add);
             }
         } catch (Exception e) {
             errorReporter.accept(e.getMessage());
