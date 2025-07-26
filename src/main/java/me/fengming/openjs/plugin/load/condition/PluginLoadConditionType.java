@@ -24,4 +24,5 @@ public record PluginLoadConditionType(Codec<? extends PluginLoadCondition> codec
     public static final PluginLoadConditionType NOT = new PluginLoadConditionType(NotCond.CODEC);
     public static final PluginLoadConditionType CONSTANT = new PluginLoadConditionType(ConstantCond.CODEC);
     public static final PluginLoadConditionType MOD = new PluginLoadConditionType(ModCond.CODEC);
+    public static final PluginLoadConditionType SIDE = new PluginLoadConditionType(SideCond.CODEC);
 }
