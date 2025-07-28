@@ -12,9 +12,7 @@ import net.minecraftforge.forgespi.language.IModFileInfo;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.function.Consumer;
 
 /**
@@ -27,12 +25,22 @@ public class OpenJSPlugins {
         MinecraftForge.EVENT_BUS.post(new PluginLoadConditionTypeRegistryEvent(PluginLoadConditionType.REGISTRY));
     }
 
+    public static void register(IOpenJSPlugin plugin) {
+        PLUGINS.add(Objects.requireNonNull(plugin));
+    }
+
     public static List<IOpenJSPlugin> view() {
         return Collections.unmodifiableList(PLUGINS);
     }
 
     public static void forEach(Consumer<? super IOpenJSPlugin> action) {
         PLUGINS.forEach(action);
+    }
+
+    public static void loadFromServices() {
+        for (var pluginLoader : ServiceLoader.load(OpenJSPluginLoader.class)) {
+            pluginLoader.registerPlugins(OpenJSPlugins::register);
+        }
     }
 
     public static void load(IModFileInfo info) {
