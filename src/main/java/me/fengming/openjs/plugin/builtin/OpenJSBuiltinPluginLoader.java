@@ -1,4 +1,7 @@
-package me.fengming.openjs.plugin;
+package me.fengming.openjs.plugin.builtin;
+
+import me.fengming.openjs.plugin.OpenJSPluginCollector;
+import me.fengming.openjs.plugin.OpenJSPluginLoader;
 
 /**
  * @author ZZZank
