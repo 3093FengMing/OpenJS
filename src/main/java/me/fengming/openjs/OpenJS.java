@@ -27,7 +27,7 @@ public class OpenJS {
 
     public static void init() {
         // Load plugin
-        ModList.get().getModFiles().forEach(OpenJSPlugins::load);
+        OpenJSPlugins.loadFromServices();
 
         OpenJSPlugins.forEach(IOpenJSPlugin::load);
         OpenJSPlugins.forEach(p -> OpenJSRegistries.EVENT_GROUPS.forEach(p::registerEvent));
