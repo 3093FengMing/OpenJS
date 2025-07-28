@@ -48,9 +48,13 @@ public class OpenJSPlugins {
                 LoadablePlugin.CODEC.decode(JsonOps.INSTANCE, element)
                     .resultOrPartial(errorReporter)
                     .map(Pair::getFirst)
-                    .map(LoadablePlugin::load)
-                    .flatMap(result -> result.resultOrPartial(errorReporter))
-                    .ifPresent(PLUGINS::add);
+                    .ifPresent(loadable -> {
+                        try {
+                            loadable.load().ifPresent(PLUGINS::add);
+                        } catch (Exception e) {
+                            OpenJS.LOGGER.error("Error when loading plugin '{}'", loadable.name(), e);
+                        }
+                    });
             }
         } catch (Exception e) {
             errorReporter.accept(e.getMessage());

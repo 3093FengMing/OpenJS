@@ -19,18 +19,14 @@ public record LoadablePlugin(String name, Optional<PluginLoadCondition> conditio
         ).apply(builder, LoadablePlugin::new)
     );
 
-    public DataResult<IOpenJSPlugin> load() {
+    public Optional<IOpenJSPlugin> load() throws Exception {
         if (condition.isPresent() && !condition.get().test()) {
-            return DataResult.error(() -> "Condition not met");
+            return Optional.empty();
         }
-        try {
-            var result =  Class.forName(name)
-                .asSubclass(IOpenJSPlugin.class)
-                .getConstructor()
-                .newInstance();
-            return DataResult.success(result);
-        } catch (Exception e) {
-            return DataResult.error(e::toString);
-        }
+        var result =  Class.forName(name)
+            .asSubclass(IOpenJSPlugin.class)
+            .getConstructor()
+            .newInstance();
+        return Optional.of(result);
     }
 }
