@@ -1,4 +1,4 @@
-package me.fengming.openjs;
+package me.fengming.openjs.plugin.builtin;
 
 import me.fengming.openjs.binding.PackMode;
 import me.fengming.openjs.event.startup.StartupEvents;
@@ -38,5 +38,4 @@ public class OpenJSBuiltinPlugin implements IOpenJSPlugin {
     public void registerEvent(EventGroupRegistry registry) {
         registry.register(StartupEvents.STARTUP_EVENTS);
     }
-
 }
