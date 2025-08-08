@@ -7,7 +7,10 @@ import me.fengming.openjs.script.ScriptProperty;
  * @author FengMing
  */
 public class Config {
-    public static int optLevel = 1;
+    /**
+     * Run script in Interpreter Mode or Compiler Mode
+     */
+    public static boolean interpretMode = true;
     /**
      * strong priority requirement
      * <p>
