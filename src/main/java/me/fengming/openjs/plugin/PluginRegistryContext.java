@@ -3,7 +3,7 @@ package me.fengming.openjs.plugin;
 /**
  * @author ZZZank
  */
-public interface OpenJSPluginCollector {
+public interface PluginRegistryContext {
 
     void register(IOpenJSPlugin plugin);
 
@@ -12,4 +12,12 @@ public interface OpenJSPluginCollector {
             register(plugin);
         }
     }
+
+    boolean isModLoaded(String modId);
+
+    boolean isClient();
+
+    boolean isServer();
+
+    boolean isDevelopmentEnvironment();
 }

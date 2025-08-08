@@ -1,6 +1,6 @@
 package me.fengming.openjs.plugin.builtin;
 
-import me.fengming.openjs.plugin.OpenJSPluginCollector;
+import me.fengming.openjs.plugin.PluginRegistryContext;
 import me.fengming.openjs.plugin.OpenJSPluginLoader;
 
 /**
@@ -8,7 +8,7 @@ import me.fengming.openjs.plugin.OpenJSPluginLoader;
  */
 public class OpenJSBuiltinPluginLoader implements OpenJSPluginLoader {
     @Override
-    public void registerPlugins(OpenJSPluginCollector collector) {
-        collector.register(new OpenJSBuiltinPlugin());
+    public void registerPlugins(PluginRegistryContext context) {
+        context.register(new OpenJSBuiltinPlugin());
     }
 }

@@ -22,8 +22,9 @@ public class OpenJSPlugins {
     }
 
     public static void loadFromServices() {
+        var pluginRegistryContext = new PluginRegistryContextImpl();
         for (var pluginLoader : ServiceLoader.load(OpenJSPluginLoader.class)) {
-            pluginLoader.registerPlugins(OpenJSPlugins::register);
+            pluginLoader.registerPlugins(pluginRegistryContext);
         }
     }
 }

@@ -5,5 +5,5 @@ package me.fengming.openjs.plugin;
  */
 public interface OpenJSPluginLoader {
 
-    void registerPlugins(OpenJSPluginCollector collector);
+    void registerPlugins(PluginRegistryContext context);
 }
