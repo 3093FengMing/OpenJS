@@ -2,7 +2,6 @@ package test;
 
 import me.fengming.openjs.event.js.EventBusJS;
 import me.fengming.openjs.event.js.EventGroupJS;
-import me.fengming.openjs.utils.eventbus.CancellableEventBus;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mozilla.javascript.*;
@@ -13,9 +12,9 @@ import java.util.function.IntSupplier;
  * @author ZZZank
  */
 public class EventBusJSTest {
-    private static final EventGroupJS EVENT_GROUP = new EventGroupJS();
-    private static final EventBusJS<IntSupplier> EVENT_BUS =
-        EVENT_GROUP.addBus("supply", CancellableEventBus.create(IntSupplier.class));
+    private static final EventGroupJS EVENT_GROUP = new EventGroupJS("TestEvents");
+    private static final EventBusJS.General<IntSupplier, ?> EVENT_BUS =
+        EVENT_GROUP.createBus("supply", IntSupplier.class, true);
 
     private static final IntSupplier EVENT = () -> 42;
 

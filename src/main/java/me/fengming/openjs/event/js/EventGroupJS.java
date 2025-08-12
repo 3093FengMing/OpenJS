@@ -7,6 +7,7 @@ import me.fengming.openjs.utils.eventbus.CancellableEventBus;
 import me.fengming.openjs.utils.eventbus.EventBus;
 import me.fengming.openjs.utils.eventbus.dispatch.DispatchCancellableEventBus;
 import me.fengming.openjs.utils.eventbus.dispatch.DispatchEventBus;
+import me.fengming.openjs.utils.eventbus.dispatch.DispatchKey;
 import org.mozilla.javascript.ScriptableObject;
 
 import java.util.HashMap;
@@ -58,6 +59,36 @@ public class EventGroupJS implements IRegistration {
 
     public <E, K> EventBusJS.DispatchCancellable<E, K> addBus(String name, DispatchCancellableEventBus<E, K> bus) {
         return addBusImpl(name, new EventBusJS.DispatchCancellable<>(bus));
+    }
+
+    public <E> EventBusJS.General<E, ?> createBus(String name, Class<E> eventType, boolean cancellable) {
+        return createBus(name, eventType, cancellable, null);
+    }
+
+    public <E, K> EventBusJS.General<E, K> createBus(
+        String name,
+        Class<E> eventType,
+        boolean cancellable,
+        DispatchKey<E, K> dispatchKey
+    ) {
+        return createBus(name, eventType, cancellable, dispatchKey, null);
+    }
+
+    public <E, K> EventBusJS.General<E, K> createBus(
+        String name,
+        Class<E> eventType,
+        boolean cancellable,
+        DispatchKey<E, K> dispatchKey,
+        Function<Object, K> inputTransformer
+    ) {
+        EventBus<E> bus = cancellable
+            ? dispatchKey != null
+            ? DispatchEventBus.create(eventType, dispatchKey)
+            : EventBus.create(eventType)
+            : dispatchKey != null
+                ? DispatchCancellableEventBus.create(eventType, dispatchKey)
+                : CancellableEventBus.create(eventType);
+        return addBusImpl(name, new EventBusJS.General<>(bus, inputTransformer));
     }
 
     public <E, K> EventBusJS.Dispatch<E, K> addBus(

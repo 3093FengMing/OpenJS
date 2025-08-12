@@ -149,4 +149,18 @@ public abstract class EventBusJS<EVENT, BUS extends EventBus<EVENT>, KEY> implem
             return bus().post(event, key);
         }
     }
+
+    public static class General<E, K> extends EventBusJS<E, EventBus<E>, K> {
+
+        protected General(EventBus<E> bus, Function<Object, K> inputTransformer) {
+            super(bus, inputTransformer);
+        }
+
+        public boolean post(E event, K key) {
+            if (bus() instanceof DispatchEventBus<E, K> dispatch) {
+                return dispatch.post(event, key);
+            }
+            throw new IllegalArgumentException("This EventBus does not support dispatching event");
+        }
+    }
 }
