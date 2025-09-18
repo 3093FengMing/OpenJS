@@ -2,14 +2,14 @@ package me.fengming.openjs.event.js;
 
 import me.fengming.openjs.binding.Binding;
 import me.fengming.openjs.registry.api.IRegistration;
-import me.fengming.openjs.script.ScriptType;
 import me.fengming.openjs.utils.eventbus.CancellableEventBus;
 import me.fengming.openjs.utils.eventbus.EventBus;
 import me.fengming.openjs.utils.eventbus.dispatch.DispatchCancellableEventBus;
 import me.fengming.openjs.utils.eventbus.dispatch.DispatchEventBus;
 import me.fengming.openjs.utils.eventbus.dispatch.DispatchKey;
-import org.mozilla.javascript.ScriptableObject;
+import org.mozilla.javascript.NativeObject;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -31,8 +31,8 @@ public class EventGroupJS implements IRegistration {
         return name;
     }
 
-    public Map<String, EventBusJS<?, ?, ?>> buses() {
-        return buses;
+    public Map<String, EventBusJS<?, ?, ?>> viewBuses() {
+        return Collections.unmodifiableMap(buses);
     }
 
     private <BUS extends EventBusJS<?, ?, ?>> BUS addBusImpl(String name, BUS bus) {
@@ -108,41 +108,22 @@ public class EventGroupJS implements IRegistration {
     }
 
     public Binding asBinding() {
-        var thiz = this;
-        return new Binding() {
-            @Override
-            public String name() {
-                return thiz.name;
-            }
-
-            @Override
-            public Object value() {
-                var obj = new EventGroupJSObject();
-                for (var entry : thiz.buses.entrySet()) {
-                    ScriptableObject.putProperty(obj, entry.getKey(), entry.getValue());
-                }
-                return obj;
-            }
-
-            @Override
-            public void onUnload(ScriptType scriptType) {
-                thiz.buses.values().forEach(EventGroupJS::unregisterBus);
-            }
-        };
+        var object = new NativeObject();
+        for (var entry : this.buses.entrySet()) {
+            object.defineProperty(entry.getKey(), entry.getValue(), 0);
+        }
+        return Binding.create(
+            this.name,
+            object,
+            null,
+            type -> this.buses.values().forEach(EventGroupJS::unregisterBus)
+        );
     }
 
     private static <E, BUS extends EventBus<E>> void unregisterBus(EventBusJS<E, BUS, ?> busJS) {
         var bus = busJS.bus();
         for (var token : busJS.tokens()) {
             bus.unregister(token);
-        }
-    }
-
-    private static final class EventGroupJSObject extends ScriptableObject {
-
-        @Override
-        public String getClassName() {
-            return "EventGroupJS";
         }
     }
 }
