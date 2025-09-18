@@ -1,4 +1,4 @@
-package me.fengming.openjs.binding.base;
+package me.fengming.openjs.binding;
 
 /**
  * @author ZZZank

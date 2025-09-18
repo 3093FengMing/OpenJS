@@ -1,9 +1,9 @@
 package me.fengming.openjs.plugin.builtin;
 
-import me.fengming.openjs.binding.PackMode;
+import me.fengming.openjs.binding.builtin.PackMode;
 import me.fengming.openjs.event.startup.StartupEvents;
 import me.fengming.openjs.plugin.IOpenJSPlugin;
-import me.fengming.openjs.binding.base.BindingRegistry;
+import me.fengming.openjs.binding.BindingRegistry;
 import me.fengming.openjs.registry.EventGroupRegistry;
 import me.fengming.openjs.registry.OpenJSRegistries;
 import me.fengming.openjs.wrapper.type.TypeWrappers;

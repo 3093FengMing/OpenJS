@@ -1,4 +1,4 @@
-package me.fengming.openjs.binding.base;
+package me.fengming.openjs.binding;
 
 import me.fengming.openjs.registry.api.IRegistration;
 import me.fengming.openjs.script.ScriptType;

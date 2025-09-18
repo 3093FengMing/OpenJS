@@ -1,6 +1,6 @@
 package me.fengming.openjs.event.js;
 
-import me.fengming.openjs.binding.base.Binding;
+import me.fengming.openjs.binding.Binding;
 import me.fengming.openjs.registry.api.IRegistration;
 import me.fengming.openjs.script.ScriptType;
 import me.fengming.openjs.utils.eventbus.CancellableEventBus;

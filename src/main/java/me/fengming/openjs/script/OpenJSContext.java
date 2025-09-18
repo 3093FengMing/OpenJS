@@ -1,7 +1,7 @@
 package me.fengming.openjs.script;
 
 import me.fengming.openjs.Config;
-import me.fengming.openjs.binding.base.Binding;
+import me.fengming.openjs.binding.Binding;
 import me.fengming.openjs.registry.OpenJSRegistries;
 import org.mozilla.javascript.*;
 
