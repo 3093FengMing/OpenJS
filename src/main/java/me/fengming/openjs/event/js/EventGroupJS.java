@@ -80,12 +80,12 @@ public class EventGroupJS implements IRegistration {
         EventBus<E> bus;
         if (cancellable) {
             bus = dispatchKey != null
-                ? DispatchEventBus.create(eventType, dispatchKey)
-                : EventBus.create(eventType);
-        } else {
-            bus = dispatchKey != null
                 ? DispatchCancellableEventBus.create(eventType, dispatchKey)
                 : CancellableEventBus.create(eventType);
+        } else {
+            bus = dispatchKey != null
+                ? DispatchEventBus.create(eventType, dispatchKey)
+                : EventBus.create(eventType);
         }
         return addBusImpl(name, new EventBusJS<>(bus, inputTransformer));
     }
