@@ -35,6 +35,6 @@ public class OpenJSBuiltinPlugin implements IOpenJSPlugin {
 
     @Override
     public void registerEvent(EventGroupRegistry registry) {
-        registry.register(StartupEvents.STARTUP_EVENTS);
+        registry.register(StartupEvents.GROUP);
     }
 }

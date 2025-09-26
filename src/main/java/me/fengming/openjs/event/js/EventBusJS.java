@@ -5,9 +5,6 @@ import me.fengming.openjs.utils.eventbus.EventBus;
 import me.fengming.openjs.utils.eventbus.EventListenerToken;
 import me.fengming.openjs.utils.eventbus.dispatch.DispatchCancellableEventBus;
 import me.fengming.openjs.utils.eventbus.dispatch.DispatchEventBus;
-import net.minecraftforge.eventbus.api.Event;
-import net.minecraftforge.eventbus.api.EventPriority;
-import net.minecraftforge.eventbus.api.IEventBus;
 import org.mozilla.javascript.Callable;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
@@ -114,47 +111,5 @@ public class EventBusJS<EVENT, KEY> implements Callable {
             this.inputTransformer.apply(key),
             (Predicate<EVENT>) Context.jsToJava(listener, Predicate.class)
         );
-    }
-
-    /**
-     * Bind this bus with Forge bus. When events are posted on Forge bus, listeners in this bus will also receive the event
-     *
-     * @param forgeBus Forge bus to bind
-     * @return {@code this}
-     */
-    public EventBusJS<EVENT, KEY> bindTo(IEventBus forgeBus) {
-        return bindTo(forgeBus, EventPriority.NORMAL, false);
-    }
-
-    /**
-     * Bind this bus with Forge bus. When events are posted on Forge bus, listeners in this bus will also receive the event
-     *
-     * @param forgeBus         Forge bus to bind
-     * @param priority         priority of this bus
-     * @param receiveCancelled if {@code true}, events previously canceled by other Forge bus listeners can still be received by this bus
-     * @return {@code this}
-     */
-    public <E extends Event> EventBusJS<EVENT, KEY> bindTo(
-        IEventBus forgeBus,
-        EventPriority priority,
-        boolean receiveCancelled
-    ) {
-        if (!Event.class.isAssignableFrom(this.bus.eventType())) {
-            throw new IllegalStateException("This bus is not targeting a forge event");
-        }
-
-        var castedBus = (EventBus<E>) bus;
-
-        forgeBus.addListener(
-            priority,
-            receiveCancelled,
-            castedBus.eventType(),
-            this.canCancel() ? event -> {
-                if (castedBus.post(event)) {
-                    event.setCanceled(true);
-                }
-            } : castedBus::post
-        );
-        return this;
     }
 }

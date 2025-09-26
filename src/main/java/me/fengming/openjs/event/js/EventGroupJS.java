@@ -119,7 +119,7 @@ public class EventGroupJS implements IRegistration {
         );
     }
 
-    private static <E, BUS extends EventBus<E>> void unregisterBus(EventBusJS<E, ?> busJS) {
+    private static <E> void unregisterBus(EventBusJS<E, ?> busJS) {
         var bus = busJS.bus();
         for (var token : busJS.tokens()) {
             bus.unregister(token);
