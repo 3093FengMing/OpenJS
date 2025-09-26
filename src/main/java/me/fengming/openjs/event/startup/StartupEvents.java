@@ -2,10 +2,10 @@ package me.fengming.openjs.event.startup;
 
 import me.fengming.openjs.event.js.EventBusJS;
 import me.fengming.openjs.event.js.EventGroupJS;
-import me.fengming.openjs.utils.eventbus.dispatch.DispatchEventBus;
 import me.fengming.openjs.utils.eventbus.dispatch.DispatchKey;
 import me.fengming.openjs.wrapper.BuiltinTypeWrappers;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.registries.RegisterEvent;
 
 /**
@@ -18,10 +18,7 @@ public interface StartupEvents {
         "registry",
         RegisterEvent.class,
         false,
-        DispatchKey.create(
-            ResourceLocation.class,
-            e -> e.getRegistryKey().location()
-        ),
+        DispatchKey.create(ResourceLocation.class, e -> e.getRegistryKey().location()),
         BuiltinTypeWrappers::resourceLocation
-    );
+    ).bindTo(MinecraftForge.EVENT_BUS);
 }
