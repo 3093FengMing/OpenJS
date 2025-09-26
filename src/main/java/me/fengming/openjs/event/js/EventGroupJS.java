@@ -20,7 +20,7 @@ import java.util.function.Function;
  */
 public class EventGroupJS implements IRegistration {
     private final String name;
-    private final Map<String, EventBusJS<?, ?, ?>> buses;
+    private final Map<String, EventBusJS<?, ?>> buses;
 
     public EventGroupJS(String name) {
         this.name = Objects.requireNonNull(name);
@@ -31,11 +31,11 @@ public class EventGroupJS implements IRegistration {
         return name;
     }
 
-    public Map<String, EventBusJS<?, ?, ?>> viewBuses() {
+    public Map<String, EventBusJS<?, ?>> viewBuses() {
         return Collections.unmodifiableMap(buses);
     }
 
-    private <BUS extends EventBusJS<?, ?, ?>> BUS addBusImpl(String name, BUS bus) {
+    private <BUS extends EventBusJS<?, ?>> BUS addBusImpl(String name, BUS bus) {
         if (name == null) {
             throw new IllegalArgumentException("'name' should not be null");
         } else if (this.buses.containsKey(name)) {
@@ -45,27 +45,23 @@ public class EventGroupJS implements IRegistration {
         return bus;
     }
 
-    public <E> EventBusJS.Regular<E> addBus(String name, EventBus<E> bus) {
-        return addBusImpl(name, new EventBusJS.Regular<>(bus));
+    public <E> EventBusJS<E, Void> addBus(String name, EventBus<E> bus) {
+        return addBusImpl(name, new EventBusJS<>(bus));
     }
 
-    public <E> EventBusJS.Cancellable<E> addBus(String name, CancellableEventBus<E> bus) {
-        return addBusImpl(name, new EventBusJS.Cancellable<>(bus));
+    public <E, K> EventBusJS<E, K> addBus(String name, DispatchEventBus<E, K> bus) {
+        return addBusImpl(name, new EventBusJS<>(bus));
     }
 
-    public <E, K> EventBusJS.Dispatch<E, K> addBus(String name, DispatchEventBus<E, K> bus) {
-        return addBusImpl(name, new EventBusJS.Dispatch<>(bus));
+    public <E> EventBusJS<E, Void> createBus(String name, Class<E> eventType) {
+        return createBus(name, eventType, false);
     }
 
-    public <E, K> EventBusJS.DispatchCancellable<E, K> addBus(String name, DispatchCancellableEventBus<E, K> bus) {
-        return addBusImpl(name, new EventBusJS.DispatchCancellable<>(bus));
-    }
-
-    public <E> EventBusJS.General<E, ?> createBus(String name, Class<E> eventType, boolean cancellable) {
+    public <E> EventBusJS<E, Void> createBus(String name, Class<E> eventType, boolean cancellable) {
         return createBus(name, eventType, cancellable, null);
     }
 
-    public <E, K> EventBusJS.General<E, K> createBus(
+    public <E, K> EventBusJS<E, K> createBus(
         String name,
         Class<E> eventType,
         boolean cancellable,
@@ -74,37 +70,40 @@ public class EventGroupJS implements IRegistration {
         return createBus(name, eventType, cancellable, dispatchKey, null);
     }
 
-    public <E, K> EventBusJS.General<E, K> createBus(
+    public <E, K> EventBusJS<E, K> createBus(
         String name,
         Class<E> eventType,
         boolean cancellable,
         DispatchKey<E, K> dispatchKey,
         Function<Object, K> inputTransformer
     ) {
-        EventBus<E> bus = cancellable
-            ? dispatchKey != null
-            ? DispatchEventBus.create(eventType, dispatchKey)
-            : EventBus.create(eventType)
-            : dispatchKey != null
+        EventBus<E> bus;
+        if (cancellable) {
+            bus = dispatchKey != null
+                ? DispatchEventBus.create(eventType, dispatchKey)
+                : EventBus.create(eventType);
+        } else {
+            bus = dispatchKey != null
                 ? DispatchCancellableEventBus.create(eventType, dispatchKey)
                 : CancellableEventBus.create(eventType);
-        return addBusImpl(name, new EventBusJS.General<>(bus, inputTransformer));
+        }
+        return addBusImpl(name, new EventBusJS<>(bus, inputTransformer));
     }
 
-    public <E, K> EventBusJS.Dispatch<E, K> addBus(
+    public <E, K> EventBusJS<E, K> addBus(
         String name,
         DispatchEventBus<E, K> bus,
         Function<Object, K> inputTransformer
     ) {
-        return addBusImpl(name, new EventBusJS.Dispatch<>(bus, inputTransformer));
+        return addBusImpl(name, new EventBusJS<>(bus, inputTransformer));
     }
 
-    public <E, K> EventBusJS.DispatchCancellable<E, K> addBus(
+    public <E, K> EventBusJS<E, K> addBus(
         String name,
         DispatchCancellableEventBus<E, K> bus,
         Function<Object, K> inputTransformer
     ) {
-        return addBusImpl(name, new EventBusJS.DispatchCancellable<>(bus, inputTransformer));
+        return addBusImpl(name, new EventBusJS<>(bus, inputTransformer));
     }
 
     public Binding asBinding() {
@@ -120,7 +119,7 @@ public class EventGroupJS implements IRegistration {
         );
     }
 
-    private static <E, BUS extends EventBus<E>> void unregisterBus(EventBusJS<E, BUS, ?> busJS) {
+    private static <E, BUS extends EventBus<E>> void unregisterBus(EventBusJS<E, ?> busJS) {
         var bus = busJS.bus();
         for (var token : busJS.tokens()) {
             bus.unregister(token);

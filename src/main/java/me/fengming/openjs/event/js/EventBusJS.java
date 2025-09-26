@@ -19,16 +19,16 @@ import java.util.function.Predicate;
 /**
  * @author ZZZank
  */
-public abstract class EventBusJS<EVENT, BUS extends EventBus<EVENT>, KEY> implements Callable {
-    private final BUS bus;
+public class EventBusJS<EVENT, KEY> implements Callable {
+    private final EventBus<EVENT> bus;
     private final List<EventListenerToken<EVENT>> tokens;
     private final Function<Object, KEY> inputTransformer;
 
-    protected EventBusJS(BUS bus) {
+    public EventBusJS(EventBus<EVENT> bus) {
         this(bus, null);
     }
 
-    protected EventBusJS(BUS bus, Function<Object, KEY> inputTransformer) {
+    protected EventBusJS(EventBus<EVENT> bus, Function<Object, KEY> inputTransformer) {
         this.bus = Objects.requireNonNull(bus);
         this.tokens = new ArrayList<>();
         this.inputTransformer = inputTransformer;
@@ -42,7 +42,7 @@ public abstract class EventBusJS<EVENT, BUS extends EventBus<EVENT>, KEY> implem
         return bus instanceof DispatchEventBus<?, ?>;
     }
 
-    public BUS bus() {
+    public EventBus<EVENT> bus() {
         return bus;
     }
 
@@ -52,6 +52,13 @@ public abstract class EventBusJS<EVENT, BUS extends EventBus<EVENT>, KEY> implem
 
     public boolean post(EVENT event) {
         return this.bus.post(event);
+    }
+
+    public boolean post(EVENT event, KEY key) {
+        if (canDispatch()) {
+            return ((DispatchEventBus<EVENT, KEY>) bus).post(event, key);
+        }
+        throw new IllegalStateException("This bus is not dispatchable");
     }
 
     @Override
@@ -104,63 +111,5 @@ public abstract class EventBusJS<EVENT, BUS extends EventBus<EVENT>, KEY> implem
             this.inputTransformer.apply(key),
             (Predicate<EVENT>) Context.jsToJava(listener, Predicate.class)
         );
-    }
-
-    public static class Regular<E> extends EventBusJS<E, EventBus<E>, Object> {
-
-        public Regular(EventBus<E> bus) {
-            super(bus);
-        }
-    }
-
-    public static class Cancellable<E> extends EventBusJS<E, CancellableEventBus<E>, Object> {
-
-        public Cancellable(CancellableEventBus<E> bus) {
-            super(bus);
-        }
-    }
-
-    public static class Dispatch<E, K> extends EventBusJS<E, DispatchEventBus<E, K>, K> {
-
-        public Dispatch(DispatchEventBus<E, K> bus) {
-            super(bus, bus.dispatchKey().keyType()::cast);
-        }
-
-        public Dispatch(DispatchEventBus<E, K> bus, Function<Object, K> inputTransformer) {
-            super(bus, inputTransformer);
-        }
-
-        public boolean post(E event, K key) {
-            return bus().post(event, key);
-        }
-    }
-
-    public static class DispatchCancellable<E, K> extends EventBusJS<E, DispatchCancellableEventBus<E, K>, K> {
-
-        public DispatchCancellable(DispatchCancellableEventBus<E, K> bus) {
-            super(bus, bus.dispatchKey().keyType()::cast);
-        }
-
-        public DispatchCancellable(DispatchCancellableEventBus<E, K> bus, Function<Object, K> inputTransformer) {
-            super(bus, inputTransformer);
-        }
-
-        public boolean post(E event, K key) {
-            return bus().post(event, key);
-        }
-    }
-
-    public static class General<E, K> extends EventBusJS<E, EventBus<E>, K> {
-
-        protected General(EventBus<E> bus, Function<Object, K> inputTransformer) {
-            super(bus, inputTransformer);
-        }
-
-        public boolean post(E event, K key) {
-            if (bus() instanceof DispatchEventBus<E, K> dispatch) {
-                return dispatch.post(event, key);
-            }
-            throw new IllegalArgumentException("This EventBus does not support dispatching event");
-        }
     }
 }

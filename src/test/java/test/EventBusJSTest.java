@@ -13,7 +13,7 @@ import java.util.function.IntSupplier;
  */
 public class EventBusJSTest {
     private static final EventGroupJS EVENT_GROUP = new EventGroupJS("TestEvents");
-    private static final EventBusJS.General<IntSupplier, ?> EVENT_BUS =
+    private static final EventBusJS<IntSupplier, Void> EVENT_BUS =
         EVENT_GROUP.createBus("supply", IntSupplier.class, true);
 
     private static final IntSupplier EVENT = () -> 42;

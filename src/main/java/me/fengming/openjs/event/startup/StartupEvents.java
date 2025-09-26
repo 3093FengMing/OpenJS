@@ -14,13 +14,13 @@ import net.minecraftforge.registries.RegisterEvent;
 public interface StartupEvents {
     EventGroupJS STARTUP_EVENTS = new EventGroupJS("StartupEvents");
 
-    EventBusJS.Dispatch<RegisterEvent, ResourceLocation> REGISTRY = STARTUP_EVENTS.addBus(
+    EventBusJS<RegisterEvent, ResourceLocation> REGISTRY = STARTUP_EVENTS.createBus(
         "registry",
-        DispatchEventBus.create(
-            RegisterEvent.class, DispatchKey.create(
-                ResourceLocation.class,
-                e -> e.getRegistryKey().location()
-            )
+        RegisterEvent.class,
+        false,
+        DispatchKey.create(
+            ResourceLocation.class,
+            e -> e.getRegistryKey().location()
         ),
         BuiltinTypeWrappers::resourceLocation
     );
