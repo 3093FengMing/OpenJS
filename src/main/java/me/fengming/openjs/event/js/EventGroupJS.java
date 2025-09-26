@@ -53,6 +53,14 @@ public class EventGroupJS implements IRegistration {
         return addBusImpl(name, new EventBusJS<>(bus));
     }
 
+    public <E, K> EventBusJS<E, K> addBus(
+        String name,
+        DispatchEventBus<E, K> bus,
+        Function<Object, K> keyTransformer
+    ) {
+        return addBusImpl(name, new EventBusJS<>(bus, keyTransformer));
+    }
+
     public <E> EventBusJS<E, Void> createBus(String name, Class<E> eventType) {
         return createBus(name, eventType, false);
     }
@@ -87,22 +95,6 @@ public class EventGroupJS implements IRegistration {
                 ? DispatchEventBus.create(eventType, dispatchKey)
                 : EventBus.create(eventType);
         }
-        return addBusImpl(name, new EventBusJS<>(bus, inputTransformer));
-    }
-
-    public <E, K> EventBusJS<E, K> addBus(
-        String name,
-        DispatchEventBus<E, K> bus,
-        Function<Object, K> inputTransformer
-    ) {
-        return addBusImpl(name, new EventBusJS<>(bus, inputTransformer));
-    }
-
-    public <E, K> EventBusJS<E, K> addBus(
-        String name,
-        DispatchCancellableEventBus<E, K> bus,
-        Function<Object, K> inputTransformer
-    ) {
         return addBusImpl(name, new EventBusJS<>(bus, inputTransformer));
     }
 

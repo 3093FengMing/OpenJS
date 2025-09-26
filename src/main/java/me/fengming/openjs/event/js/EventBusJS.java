@@ -22,16 +22,16 @@ import java.util.function.Predicate;
 public class EventBusJS<EVENT, KEY> implements Callable {
     private final EventBus<EVENT> bus;
     private final List<EventListenerToken<EVENT>> tokens;
-    private final Function<Object, KEY> inputTransformer;
+    private final Function<Object, KEY> keyTransformer;
 
     public EventBusJS(EventBus<EVENT> bus) {
         this(bus, null);
     }
 
-    protected EventBusJS(EventBus<EVENT> bus, Function<Object, KEY> inputTransformer) {
+    protected EventBusJS(EventBus<EVENT> bus, Function<Object, KEY> keyTransformer) {
         this.bus = Objects.requireNonNull(bus);
         this.tokens = new ArrayList<>();
-        this.inputTransformer = inputTransformer;
+        this.keyTransformer = keyTransformer;
     }
 
     public boolean canCancel() {
@@ -100,7 +100,7 @@ public class EventBusJS<EVENT, KEY> implements Callable {
     private EventListenerToken<EVENT> registerDispatch(Object listener, Object key) {
         var bus = (DispatchEventBus<EVENT, KEY>) this.bus;
         return bus.addListener(
-            this.inputTransformer.apply(key),
+            this.keyTransformer.apply(key),
             (Consumer<EVENT>) Context.jsToJava(listener, Consumer.class)
         );
     }
@@ -108,7 +108,7 @@ public class EventBusJS<EVENT, KEY> implements Callable {
     private EventListenerToken<EVENT> registerDispatchCancellable(Object listener, Object key) {
         var bus = (DispatchCancellableEventBus<EVENT, KEY>) this.bus;
         return bus.addListener(
-            this.inputTransformer.apply(key),
+            this.keyTransformer.apply(key),
             (Predicate<EVENT>) Context.jsToJava(listener, Predicate.class)
         );
     }
