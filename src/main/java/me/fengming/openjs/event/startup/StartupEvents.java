@@ -1,6 +1,6 @@
 package me.fengming.openjs.event.startup;
 
-import me.fengming.openjs.event.js.EventBusForgeBinding;
+import me.fengming.openjs.event.js.EventBusForgeBridge;
 import me.fengming.openjs.event.js.EventBusJS;
 import me.fengming.openjs.event.js.EventGroupJS;
 import me.fengming.openjs.utils.eventbus.dispatch.DispatchKey;
@@ -23,6 +23,6 @@ public interface StartupEvents {
         BuiltinTypeWrappers::resourceLocation
     );
 
-    EventBusForgeBinding FORGE_BINDING = EventBusForgeBinding.create(MinecraftForge.EVENT_BUS)
+    EventBusForgeBridge FORGE_BRIDGE = EventBusForgeBridge.create(MinecraftForge.EVENT_BUS)
         .bind(REGISTRY);
 }

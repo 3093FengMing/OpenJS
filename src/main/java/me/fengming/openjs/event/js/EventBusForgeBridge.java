@@ -15,41 +15,27 @@ import java.util.function.Consumer;
 /**
  * @author ZZZank
  */
-public class EventBusForgeBinding {
-    public static EventBusForgeBinding create(IEventBus forgeBus) {
-        return new EventBusForgeBinding(forgeBus);
+public class EventBusForgeBridge {
+    public static EventBusForgeBridge create(IEventBus forgeBus) {
+        return new EventBusForgeBridge(forgeBus);
     }
 
     private final IEventBus forgeBus;
     private final List<RegisteredBus<?>> registered = new ArrayList<>();
 
-    protected EventBusForgeBinding(IEventBus forgeBus) {
+    protected EventBusForgeBridge(IEventBus forgeBus) {
         this.forgeBus = Objects.requireNonNull(forgeBus);
     }
 
-    public <E extends Event> EventBusForgeBinding bindRawBus(EventBus<E> bus) {
-        return bindRawBus(bus, EventPriority.NORMAL, false);
+    public <E extends Event> EventBusForgeBridge bind(EventBus<E> bus) {
+        return bind(bus, EventPriority.NORMAL, false);
     }
 
-    public <E extends Event> EventBusForgeBinding bind(EventBusJS<E, ?> bus) {
-        return bindRawBus(bus.bus(), EventPriority.NORMAL, false);
+    public <E extends Event> EventBusForgeBridge bind(EventBusJS<E, ?> bus) {
+        return bind(bus.bus(), EventPriority.NORMAL, false);
     }
 
-    public <E extends Event> EventBusForgeBinding bindRawBus(Iterable<? extends EventBus<E>> buses) {
-        for (var bus : buses) {
-            bindRawBus(bus);
-        }
-        return this;
-    }
-
-    public EventBusForgeBinding bind(Iterable<? extends EventBusJS<? extends Event, ?>> buses) {
-        for (var bus : buses) {
-            bind(bus);
-        }
-        return this;
-    }
-
-    public <E extends Event> EventBusForgeBinding bindRawBus(EventBus<E> bus, EventPriority priority, boolean receiveCancelled) {
+    public <E extends Event> EventBusForgeBridge bind(EventBus<E> bus, EventPriority priority, boolean receiveCancelled) {
         Consumer<E> listener;
         if (bus instanceof CancellableEventBus<E>) {
             listener = event -> {

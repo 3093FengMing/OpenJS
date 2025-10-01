@@ -1,6 +1,6 @@
 package me.fengming.openjs.event.server;
 
-import me.fengming.openjs.event.js.EventBusForgeBinding;
+import me.fengming.openjs.event.js.EventBusForgeBridge;
 import me.fengming.openjs.event.js.EventBusJS;
 import me.fengming.openjs.event.js.EventGroupJS;
 import net.minecraftforge.common.MinecraftForge;
@@ -35,7 +35,7 @@ public interface ServerEvents {
     EventBusJS<TickEvent.ServerTickEvent, Void> TICK =
         GROUP.createBus("tick", TickEvent.ServerTickEvent.class);
 
-    EventBusForgeBinding FORGE_BINDING = EventBusForgeBinding.create(MinecraftForge.EVENT_BUS)
+    EventBusForgeBridge FORGE_BRIDGE = EventBusForgeBridge.create(MinecraftForge.EVENT_BUS)
         .bind(ABOUT_TO_START)
         .bind(STARTING)
         .bind(STARTED)
