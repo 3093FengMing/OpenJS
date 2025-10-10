@@ -46,11 +46,11 @@ public class EventGroupJS implements IRegistration {
     }
 
     public <E> EventBusJS<E, Void> addBus(String name, EventBus<E> bus) {
-        return addBusImpl(name, new EventBusJS<>(bus));
+        return addBusImpl(name, new EventBusJS<>(bus, null));
     }
 
     public <E, K> EventBusJS<E, K> addBus(String name, DispatchEventBus<E, K> bus) {
-        return addBusImpl(name, new EventBusJS<>(bus));
+        return addBusImpl(name, new EventBusJS<>(bus, null));
     }
 
     public <E, K> EventBusJS<E, K> addBus(
@@ -83,7 +83,7 @@ public class EventGroupJS implements IRegistration {
         Class<E> eventType,
         boolean cancellable,
         DispatchKey<E, K> dispatchKey,
-        Function<Object, K> inputTransformer
+        Function<Object, K> keyTransformer
     ) {
         EventBus<E> bus;
         if (cancellable) {
@@ -95,13 +95,13 @@ public class EventGroupJS implements IRegistration {
                 ? DispatchEventBus.create(eventType, dispatchKey)
                 : EventBus.create(eventType);
         }
-        return addBusImpl(name, new EventBusJS<>(bus, inputTransformer));
+        return addBusImpl(name, new EventBusJS<>(bus, keyTransformer));
     }
 
     public Binding asBinding() {
         var object = new NativeObject();
         for (var entry : this.buses.entrySet()) {
-            object.defineProperty(entry.getKey(), entry.getValue(), 0);
+            object.put(entry.getKey(), object, entry.getValue());
         }
         return Binding.create(
             this.name,

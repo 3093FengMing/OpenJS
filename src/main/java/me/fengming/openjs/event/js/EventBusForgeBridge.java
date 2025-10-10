@@ -27,14 +27,6 @@ public class EventBusForgeBridge {
         this.forgeBus = Objects.requireNonNull(forgeBus);
     }
 
-    public <E extends Event> EventBusForgeBridge bind(EventBus<E> bus) {
-        return bind(bus, EventPriority.NORMAL, false);
-    }
-
-    public <E extends Event> EventBusForgeBridge bind(EventBusJS<E, ?> bus) {
-        return bind(bus.bus(), EventPriority.NORMAL, false);
-    }
-
     public <E extends Event> EventBusForgeBridge bind(EventBus<E> bus, EventPriority priority, boolean receiveCancelled) {
         Consumer<E> listener;
         if (bus instanceof CancellableEventBus<E>) {
@@ -51,7 +43,19 @@ public class EventBusForgeBridge {
         return this;
     }
 
-    public boolean unBind(RegisteredBus<?> registered) {
+    public <E extends Event> EventBusForgeBridge bind(EventBus<E> bus) {
+        return bind(bus, EventPriority.NORMAL, false);
+    }
+
+    public <E extends Event> EventBusForgeBridge bind(EventBusJS<E, ?> bus, EventPriority priority, boolean receiveCancelled) {
+        return bind(bus.bus(), priority, receiveCancelled);
+    }
+
+    public <E extends Event> EventBusForgeBridge bind(EventBusJS<E, ?> bus) {
+        return bind(bus.bus(), EventPriority.NORMAL, false);
+    }
+
+    public boolean unbind(RegisteredBus<?> registered) {
         if (this.registered.remove(registered)) {
             forgeBus.unregister(registered.listener);
             return true;
@@ -63,9 +67,6 @@ public class EventBusForgeBridge {
         return Collections.unmodifiableList(this.registered);
     }
 
-    public record RegisteredBus<T>(
-        EventBus<T> bus,
-        Consumer<T> listener
-    ) {
+    public record RegisteredBus<T>(EventBus<T> bus, Consumer<T> listener) {
     }
 }

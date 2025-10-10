@@ -24,10 +24,6 @@ public class EventBusJS<EVENT, KEY> implements Callable {
     private final List<EventListenerToken<EVENT>> tokens;
     private final Function<Object, KEY> keyTransformer;
 
-    public EventBusJS(EventBus<EVENT> bus) {
-        this(bus, null);
-    }
-
     protected EventBusJS(EventBus<EVENT> bus, Function<Object, KEY> keyTransformer) {
         this.bus = Objects.requireNonNull(bus);
         this.tokens = new ArrayList<>();
