@@ -11,6 +11,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 /**
  * @author ZZZank
@@ -38,8 +40,17 @@ public class EventBusForgeBridge {
         } else {
             listener = bus::post;
         }
-        forgeBus.addListener(priority, receiveCancelled, bus.eventType(), listener);
-        registered.add(new RegisteredBus<>(bus, listener));
+        return bindImpl(bus.eventType(), listener, priority, receiveCancelled);
+    }
+
+    private <E extends Event> EventBusForgeBridge bindImpl(
+        Class<E> eventType,
+        Consumer<E> listener,
+        EventPriority priority,
+        boolean receiveCancelled
+    ) {
+        forgeBus.addListener(priority, receiveCancelled, eventType, listener);
+        registered.add(new RegisteredBus<>(eventType, listener));
         return this;
     }
 
@@ -47,12 +58,46 @@ public class EventBusForgeBridge {
         return bind(bus, EventPriority.NORMAL, false);
     }
 
-    public <E extends Event> EventBusForgeBridge bind(EventBusJS<E, ?> bus, EventPriority priority, boolean receiveCancelled) {
-        return bind(bus.bus(), priority, receiveCancelled);
-    }
-
     public <E extends Event> EventBusForgeBridge bind(EventBusJS<E, ?> bus) {
         return bind(bus.bus(), EventPriority.NORMAL, false);
+    }
+
+    public <E, E_FORGE extends Event> EventBusForgeBridge bindBridged(
+        EventBus<E> bus,
+        Function<E_FORGE, E> eventWrapper,
+        Class<E_FORGE> eventType,
+        EventPriority priority,
+        boolean receiveCancelled
+    ) {
+        Objects.requireNonNull(bus, "EventBus<E> bus == null");
+        Objects.requireNonNull(eventWrapper, "Function<E_FORGE, E> eventWrapper == null");
+        Consumer<E_FORGE> listener;
+        if (bus instanceof CancellableEventBus<E>) {
+            listener = e -> {
+                if (bus.post(eventWrapper.apply(e))) {
+                    e.setCanceled(true);
+                }
+            };
+        } else {
+            listener = e -> bus.post(eventWrapper.apply(e));
+        }
+        return bindImpl(eventType, listener, priority, receiveCancelled);
+    }
+
+    public <E, E_FORGE extends Event> EventBusForgeBridge bindBridged(
+        EventBus<E> bus,
+        Function<E_FORGE, E> eventWrapper,
+        Class<E_FORGE> eventType
+    ) {
+        return bindBridged(bus, eventWrapper, eventType, EventPriority.NORMAL, false);
+    }
+
+    public <E, E_FORGE extends Event> EventBusForgeBridge bindBridged(
+        EventBusJS<E, ?> bus,
+        Function<E_FORGE, E> eventWrapper,
+        Class<E_FORGE> eventType
+    ) {
+        return bindBridged(bus.bus(), eventWrapper, eventType);
     }
 
     public boolean unbind(RegisteredBus<?> registered) {
@@ -67,6 +112,6 @@ public class EventBusForgeBridge {
         return Collections.unmodifiableList(this.registered);
     }
 
-    public record RegisteredBus<T>(EventBus<T> bus, Consumer<T> listener) {
+    public record RegisteredBus<T>(Class<T> eventType, Consumer<T> listener) {
     }
 }
