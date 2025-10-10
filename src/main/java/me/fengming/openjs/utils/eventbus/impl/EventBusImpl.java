@@ -3,6 +3,7 @@ package me.fengming.openjs.utils.eventbus.impl;
 import me.fengming.openjs.utils.eventbus.EventBus;
 
 import java.util.function.Consumer;
+import java.util.function.IntFunction;
 import java.util.stream.Stream;
 
 /**
@@ -21,7 +22,7 @@ public final class EventBusImpl<E> extends EventBusBase<E, Consumer<E>> implemen
     }
 
     private static <E> Consumer<E> compile(Stream<Consumer<E>> consumerStream) {
-        var arr = (Consumer<E>[]) consumerStream.toArray(Consumer[]::new);
+        var arr = consumerStream.toArray((IntFunction<Consumer<E>[]>) Consumer[]::new);
         switch (arr.length) {
             case 0:
                 return (ignored) -> {};

@@ -15,14 +15,14 @@ import net.minecraftforge.registries.RegisterEvent;
 public interface StartupEvents {
     EventGroupJS GROUP = new EventGroupJS("StartupEvents");
 
-    EventBusJS<RegisterEvent, ResourceLocation> REGISTRY = GROUP.createBus(
+    EventBusJS<RegistryEventJS, ResourceLocation> REGISTRY = GROUP.createBus(
         "registry",
-        RegisterEvent.class,
+        RegistryEventJS.class,
         false,
-        DispatchKey.create(ResourceLocation.class, e -> e.getRegistryKey().location()),
+        DispatchKey.create(ResourceLocation.class, RegistryEventJS::registryId),
         BuiltinTypeWrappers::resourceLocation
     );
 
     EventBusForgeBridge FORGE_BRIDGE = EventBusForgeBridge.create(MinecraftForge.EVENT_BUS)
-        .bind(REGISTRY);
+        .bindBridged(REGISTRY, RegistryEventJS::new, RegisterEvent.class);
 }
