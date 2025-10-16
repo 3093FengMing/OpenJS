@@ -2,18 +2,12 @@ package me.fengming.openjs.event.js;
 
 import me.fengming.openjs.binding.Binding;
 import me.fengming.openjs.registry.api.IRegistration;
-import me.fengming.openjs.utils.eventbus.CancellableEventBus;
-import me.fengming.openjs.utils.eventbus.EventBus;
-import me.fengming.openjs.utils.eventbus.dispatch.DispatchCancellableEventBus;
-import me.fengming.openjs.utils.eventbus.dispatch.DispatchEventBus;
-import me.fengming.openjs.utils.eventbus.dispatch.DispatchKey;
 import org.mozilla.javascript.NativeObject;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.Function;
 
 /**
  * @author ZZZank
@@ -39,63 +33,22 @@ public class EventGroupJS implements IRegistration {
         if (name == null) {
             throw new IllegalArgumentException("'name' should not be null");
         } else if (this.buses.containsKey(name)) {
-            throw new IllegalArgumentException("A bus with name '%s' has already been registered");
+            throw new IllegalArgumentException(String.format("A bus with name '%s' has already been registered", name));
         }
         this.buses.put(name, bus);
         return bus;
     }
 
-    public <E> EventBusJS<E, Void> addBus(String name, EventBus<E> bus) {
-        return addBusImpl(name, new EventBusJS<>(bus, null));
+    public <E, K> EventBusJS<E, K> addBus(String name, EventBusJS<E, K> bus) {
+        return addBusImpl(name, bus);
     }
 
-    public <E, K> EventBusJS<E, K> addBus(String name, DispatchEventBus<E, K> bus) {
-        return addBusImpl(name, new EventBusJS<>(bus, null));
+    public <E> EventBusJS<E, Void> addBus(String name, Class<E> eventType) {
+        return addBusImpl(name, EventBusJS.of(eventType));
     }
 
-    public <E, K> EventBusJS<E, K> addBus(
-        String name,
-        DispatchEventBus<E, K> bus,
-        Function<Object, K> keyTransformer
-    ) {
-        return addBusImpl(name, new EventBusJS<>(bus, keyTransformer));
-    }
-
-    public <E> EventBusJS<E, Void> createBus(String name, Class<E> eventType) {
-        return createBus(name, eventType, false);
-    }
-
-    public <E> EventBusJS<E, Void> createBus(String name, Class<E> eventType, boolean cancellable) {
-        return createBus(name, eventType, cancellable, null);
-    }
-
-    public <E, K> EventBusJS<E, K> createBus(
-        String name,
-        Class<E> eventType,
-        boolean cancellable,
-        DispatchKey<E, K> dispatchKey
-    ) {
-        return createBus(name, eventType, cancellable, dispatchKey, null);
-    }
-
-    public <E, K> EventBusJS<E, K> createBus(
-        String name,
-        Class<E> eventType,
-        boolean cancellable,
-        DispatchKey<E, K> dispatchKey,
-        Function<Object, K> keyTransformer
-    ) {
-        EventBus<E> bus;
-        if (cancellable) {
-            bus = dispatchKey != null
-                ? DispatchCancellableEventBus.create(eventType, dispatchKey)
-                : CancellableEventBus.create(eventType);
-        } else {
-            bus = dispatchKey != null
-                ? DispatchEventBus.create(eventType, dispatchKey)
-                : EventBus.create(eventType);
-        }
-        return addBusImpl(name, new EventBusJS<>(bus, keyTransformer));
+    public <E> EventBusJS<E, Void> addBus(String name, Class<E> eventType, boolean cancellable) {
+        return addBusImpl(name, cancellable ? EventBusJS.ofCancellable(eventType) : EventBusJS.of(eventType));
     }
 
     public Binding asBinding() {

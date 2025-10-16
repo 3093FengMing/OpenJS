@@ -15,9 +15,9 @@ import java.util.function.IntSupplier;
 public class EventBusJSTest {
     private static final EventGroupJS EVENT_GROUP = new EventGroupJS("TestEvents");
     private static final EventBusJS<IntSupplier, Void> CANCELLABLE =
-        EVENT_GROUP.createBus("cancellable", IntSupplier.class, true);
+        EVENT_GROUP.addBus("cancellable", IntSupplier.class, true);
     private static final EventBusJS<IntConsumer, Void> REGULAR =
-        EVENT_GROUP.createBus("regular", IntConsumer.class);
+        EVENT_GROUP.addBus("regular", IntConsumer.class);
 
     @Test
     public void testCancellable() {

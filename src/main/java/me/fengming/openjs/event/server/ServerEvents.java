@@ -15,25 +15,25 @@ public interface ServerEvents {
     EventGroupJS GROUP = new EventGroupJS("ServerEvents");
 
     EventBusJS<ServerAboutToStartEvent, Void> ABOUT_TO_START =
-        GROUP.createBus("aboutToStart", ServerAboutToStartEvent.class);
+        GROUP.addBus("aboutToStart", ServerAboutToStartEvent.class);
 
     EventBusJS<ServerStartingEvent, Void> STARTING =
-        GROUP.createBus("starting", ServerStartingEvent.class);
+        GROUP.addBus("starting", ServerStartingEvent.class);
 
     EventBusJS<ServerStartedEvent, Void> STARTED =
-        GROUP.createBus("started", ServerStartedEvent.class);
+        GROUP.addBus("started", ServerStartedEvent.class);
 
     EventBusJS<ServerStoppingEvent, Void> STOPPING =
-        GROUP.createBus("stopping", ServerStoppingEvent.class);
+        GROUP.addBus("stopping", ServerStoppingEvent.class);
 
     EventBusJS<ServerStoppedEvent, Void> STOPPED =
-        GROUP.createBus("stopped", ServerStoppedEvent.class);
+        GROUP.addBus("stopped", ServerStoppedEvent.class);
 
     EventBusJS<ServerChatEvent, Void> CHAT =
-        GROUP.createBus("chat", ServerChatEvent.class);
+        GROUP.addBus("chat", ServerChatEvent.class);
 
     EventBusJS<TickEvent.ServerTickEvent, Void> TICK =
-        GROUP.createBus("tick", TickEvent.ServerTickEvent.class);
+        GROUP.addBus("tick", TickEvent.ServerTickEvent.class);
 
     EventBusForgeBridge FORGE_BRIDGE = EventBusForgeBridge.create(MinecraftForge.EVENT_BUS)
         .bind(ABOUT_TO_START)

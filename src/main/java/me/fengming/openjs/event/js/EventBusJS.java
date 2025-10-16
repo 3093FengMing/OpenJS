@@ -5,6 +5,7 @@ import me.fengming.openjs.utils.eventbus.EventBus;
 import me.fengming.openjs.utils.eventbus.EventListenerToken;
 import me.fengming.openjs.utils.eventbus.dispatch.DispatchCancellableEventBus;
 import me.fengming.openjs.utils.eventbus.dispatch.DispatchEventBus;
+import me.fengming.openjs.utils.eventbus.dispatch.DispatchKey;
 import org.mozilla.javascript.Callable;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
@@ -20,6 +21,37 @@ import java.util.function.Predicate;
  * @author ZZZank
  */
 public class EventBusJS<EVENT, KEY> implements Callable {
+    public static <E, K> EventBusJS<E, K> of(EventBus<E> bus, Function<Object, K> keyTransformer) {
+        return new EventBusJS<>(bus, keyTransformer);
+    }
+
+    public static <E> EventBusJS<E, Void> of(Class<E> eventType) {
+        return new EventBusJS<>(EventBus.create(eventType), null);
+    }
+
+    public static <E> EventBusJS<E, Void> ofCancellable(Class<E> eventType) {
+        return new EventBusJS<>(EventBus.create(eventType), null);
+    }
+
+    public static <E, K> EventBusJS<E, K> of(
+        Class<E> eventType,
+        boolean cancellable,
+        DispatchKey<E, K> dispatchKey,
+        Function<Object, K> keyTransformer
+    ) {
+        EventBus<E> bus;
+        if (cancellable) {
+            bus = dispatchKey != null
+                ? DispatchCancellableEventBus.create(eventType, dispatchKey)
+                : CancellableEventBus.create(eventType);
+        } else {
+            bus = dispatchKey != null
+                ? DispatchEventBus.create(eventType, dispatchKey)
+                : EventBus.create(eventType);
+        }
+        return new EventBusJS<>(bus, keyTransformer);
+    }
+
     private final EventBus<EVENT> bus;
     private final List<EventListenerToken<EVENT>> tokens;
     private final Function<Object, KEY> keyTransformer;
