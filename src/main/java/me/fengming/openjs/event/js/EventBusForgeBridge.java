@@ -6,13 +6,9 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Predicate;
 
 /**
  * @author ZZZank
@@ -23,7 +19,6 @@ public class EventBusForgeBridge {
     }
 
     private final IEventBus forgeBus;
-    private final List<RegisteredBus<?>> registered = new ArrayList<>();
 
     protected EventBusForgeBridge(IEventBus forgeBus) {
         this.forgeBus = Objects.requireNonNull(forgeBus);
@@ -50,7 +45,6 @@ public class EventBusForgeBridge {
         boolean receiveCancelled
     ) {
         forgeBus.addListener(priority, receiveCancelled, eventType, listener);
-        registered.add(new RegisteredBus<>(eventType, listener));
         return this;
     }
 
@@ -98,20 +92,5 @@ public class EventBusForgeBridge {
         Class<E_FORGE> eventType
     ) {
         return bindBridged(bus.bus(), eventWrapper, eventType);
-    }
-
-    public boolean unbind(RegisteredBus<?> registered) {
-        if (this.registered.remove(registered)) {
-            forgeBus.unregister(registered.listener);
-            return true;
-        }
-        return false;
-    }
-
-    public List<RegisteredBus<?>> viewRegistered() {
-        return Collections.unmodifiableList(this.registered);
-    }
-
-    public record RegisteredBus<T>(Class<T> eventType, Consumer<T> listener) {
     }
 }
