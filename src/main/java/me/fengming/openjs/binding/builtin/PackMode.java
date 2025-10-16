@@ -1,4 +1,4 @@
-package me.fengming.openjs.binding;
+package me.fengming.openjs.binding.builtin;
 
 import me.fengming.openjs.Config;
 

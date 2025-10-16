@@ -1,9 +1,7 @@
 package me.fengming.openjs;
 
-import me.fengming.openjs.event.ForgeEventHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Event;
-import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.IModBusEvent;
@@ -24,7 +22,6 @@ public class OpenJSMod {
         
         MOD_BUS = context.getModEventBus();
         MOD_BUS.addListener(this::commonSetup);
-        MOD_BUS.addListener(EventPriority.LOWEST, ForgeEventHandler::handleRegister);
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {

@@ -1,6 +1,6 @@
 package me.fengming.openjs.script;
 
-import me.fengming.openjs.binding.PackMode;
+import me.fengming.openjs.binding.builtin.PackMode;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;

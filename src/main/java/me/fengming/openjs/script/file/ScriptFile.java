@@ -1,7 +1,7 @@
 package me.fengming.openjs.script.file;
 
 import me.fengming.openjs.OpenJS;
-import me.fengming.openjs.binding.PackMode;
+import me.fengming.openjs.binding.builtin.PackMode;
 import me.fengming.openjs.script.OpenJSContext;
 import me.fengming.openjs.script.ScriptProperties;
 import me.fengming.openjs.script.ScriptProperty;
