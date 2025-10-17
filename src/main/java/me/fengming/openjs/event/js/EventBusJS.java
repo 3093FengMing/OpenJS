@@ -30,7 +30,7 @@ public class EventBusJS<EVENT, KEY> implements Callable {
     }
 
     public static <E> EventBusJS<E, Void> ofCancellable(Class<E> eventType) {
-        return new EventBusJS<>(EventBus.create(eventType), null);
+        return new EventBusJS<>(CancellableEventBus.create(eventType), null);
     }
 
     public static <E, K> EventBusJS<E, K> of(
